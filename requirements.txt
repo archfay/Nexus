@@ -1,0 +1,5 @@
+heroku-tl-new==1.7.2
+Pillow
+orjson>=3.9.0
+
+# Python 3.9+

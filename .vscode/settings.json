@@ -1,0 +1,7 @@
+{
+    "Lingma.cloudModelAutoTriggerGenerateLength": "long",
+    "Lingma.cloudModelManualTriggerGenerateLength": "long",
+    "Lingma.aI Chat.mcpToolsInAgentMode": true,
+    "Lingma.localMachineModel": true,
+    "CodeGPT.apiKey": "CodeGPT Plus Beta"
+}
