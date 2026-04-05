@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -42,7 +42,7 @@ class NexusConfigMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "cfg_emoji",
-                "🪐",
+                "🌐",
                 "Change emoji when opening config",
                 validator=loader.validators.String(),
             ),
@@ -865,6 +865,7 @@ class NexusConfigMod(loader.Module):
         call: InlineCall,
         mod: str,
         obj_type: typing.Union[bool, str] = False,
+        page: int = 0,
     ):
         btns = [
             {
@@ -874,6 +875,48 @@ class NexusConfigMod(loader.Module):
             }
             for param in self.lookup(mod).config
         ]
+        
+        # Для KernelSettings показываем только кнопки без значений
+        if mod == "KernelSettings":
+            # Группируем по категориям
+            categories = {}
+            for param in self.lookup(mod).config:
+                doc = self.lookup(mod).config.getdoc(param)
+                if doc.startswith("["):
+                    category = doc.split("]")[0][1:]
+                    if category not in categories:
+                        categories[category] = []
+                    categories[category].append(param)
+            
+            # Создаем кнопки по категориям
+            btns_by_category = []
+            for category in sorted(categories.keys()):
+                btns_by_category.append([
+                    {
+                        "text": f"📁 {category} ({len(categories[category])})",
+                        "callback": self.inline__kernel_category,
+                        "args": (mod, category),
+                        "kwargs": {"obj_type": obj_type},
+                    }
+                ])
+            
+            await call.edit(
+                f"⚙️ <b>Kernel Settings</b>\n\n"
+                f"📊 Total categories: <code>{len(categories)}</code>\n"
+                f"📋 Total settings: <code>{len(self.lookup(mod).config)}</code>\n\n"
+                f"Select a category:",
+                reply_markup=btns_by_category + [
+                    [
+                        {
+                            "text": self.strings("back_btn"),
+                            "callback": self.inline__global_config,
+                            "kwargs": {"obj_type": obj_type},
+                        },
+                        {"text": self.strings("close_btn"), "action": "close"},
+                    ]
+                ],
+            )
+            return
 
         await call.edit(
             self.strings(
@@ -962,7 +1005,11 @@ class NexusConfigMod(loader.Module):
                 and callable(mod.strings)
                 and (mod.__origin__.startswith("<core") or not obj_type)
                 and (not mod.__origin__.startswith("<core") or obj_type)
+                and mod.strings("name") not in ["KernelCore", "KernelLoader", "KernelSecurity", "KernelDatabase", "KernelWeb", "KernelMessages", "KernelCommands", "KernelSettings"]
             ]
+            
+            if obj_type:
+                to_config = ["⚙️ KernelSettings"] + to_config
         else:
             to_config = [
                 lib.name for lib in self.allmodules.libraries if hasattr(lib, "config")
@@ -975,15 +1022,22 @@ class NexusConfigMod(loader.Module):
             to_config[page * NUM_ROWS * ROW_SIZE : (page + 1) * NUM_ROWS * ROW_SIZE],
             3,
         ):
-            row = [
-                {
-                    "text": btn,
-                    "callback": self.inline__configure,
-                    "args": (btn,),
-                    "kwargs": {"obj_type": obj_type},
-                }
-                for btn in mod_row
-            ]
+            row = []
+            for btn in mod_row:
+                if btn == "⚙️ KernelSettings":
+                    row.append({
+                        "text": btn,
+                        "callback": self.inline__configure,
+                        "args": ("KernelSettings",),
+                        "kwargs": {"obj_type": obj_type},
+                    })
+                else:
+                    row.append({
+                        "text": btn,
+                        "callback": self.inline__configure,
+                        "args": (btn,),
+                        "kwargs": {"obj_type": obj_type},
+                    })
             kb += [row]
 
         if len(to_config) > NUM_ROWS * ROW_SIZE:
@@ -1010,6 +1064,88 @@ class NexusConfigMod(loader.Module):
                 "configure" if isinstance(obj_type, bool) else "configure_lib"
             ),
             reply_markup=kb,
+        )
+
+    async def inline__kernel_category(
+        self,
+        call: InlineCall,
+        mod: str,
+        category: str,
+        obj_type: typing.Union[bool, str] = False,
+    ):
+        # Получаем все настройки из категории
+        params = []
+        for param in self.lookup(mod).config:
+            doc = self.lookup(mod).config.getdoc(param)
+            if doc.startswith(f"[{category}]"):
+                params.append(param)
+        
+        btns = [
+            {
+                "text": param.replace("_", " ").title(),
+                "callback": self.inline__configure_option,
+                "kwargs": {"obj_type": obj_type, "mod": mod, "config_opt": param},
+            }
+            for param in params
+        ]
+        
+        await call.edit(
+            f"📁 <b>{category} Settings</b>\n\n"
+            f"📋 Total: <code>{len(params)}</code> settings\n\n"
+            f"Select a setting to configure:",
+            reply_markup=list(utils.chunks(btns, 2))
+            + [
+                [
+                    {
+                        "text": self.strings("back_btn"),
+                        "callback": self.inline__configure,
+                        "args": (mod,),
+                        "kwargs": {"obj_type": obj_type},
+                    },
+                    {"text": self.strings("close_btn"), "action": "close"},
+                ]
+            ],
+        )
+
+    async def inline__kernel_category(
+        self,
+        call: InlineCall,
+        mod: str,
+        category: str,
+        obj_type: typing.Union[bool, str] = False,
+    ):
+        # Получаем все настройки из категории
+        params = []
+        for param in self.lookup(mod).config:
+            doc = self.lookup(mod).config.getdoc(param)
+            if doc.startswith(f"[{category}]"):
+                params.append(param)
+        
+        btns = [
+            {
+                "text": param.replace("_", " ").title(),
+                "callback": self.inline__configure_option,
+                "kwargs": {"obj_type": obj_type, "mod": mod, "config_opt": param},
+            }
+            for param in params
+        ]
+        
+        await call.edit(
+            f"📁 <b>{category} Settings</b>\n\n"
+            f"📋 Total: <code>{len(params)}</code> settings\n\n"
+            f"Select a setting to configure:",
+            reply_markup=list(utils.chunks(btns, 2))
+            + [
+                [
+                    {
+                        "text": self.strings("back_btn"),
+                        "callback": self.inline__configure,
+                        "args": (mod,),
+                        "kwargs": {"obj_type": obj_type},
+                    },
+                    {"text": self.strings("close_btn"), "action": "close"},
+                ]
+            ],
         )
 
     @loader.command(alias="cfg")

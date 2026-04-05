@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Userbot - Документация для разработчиков</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+    
+    <!-- Geometric Background -->
+    <div class="geometric-bg">
+        <div class="geometric-shape shape-1"></div>
+        <div class="geometric-shape shape-2"></div>
+        <div class="geometric-shape shape-3"></div>
+        <div class="geometric-shape shape-4"></div>
+    </div>
+    
+    <!-- Stars -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <!-- Wave Effect -->
+    <div class="wave-container">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <!-- Scroll to Top -->
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🚀</div>
+            <h2>Nexus</h2>
+            <p class="version">v1.0</p>
+        </div>
+        <ul>
+            <li><a href="#intro"><i class="fas fa-book"></i> Введение</a></li>
+            <li><a href="#quickstart"><i class="fas fa-rocket"></i> Быстрый старт</a></li>
+            <li><a href="#structure"><i class="fas fa-sitemap"></i> Структура модуля</a></li>
+            <li><a href="#commands"><i class="fas fa-terminal"></i> Команды</a></li>
+            <li><a href="#inline"><i class="fas fa-mouse-pointer"></i> Inline элементы</a></li>
+            <li><a href="#database"><i class="fas fa-database"></i> База данных</a></li>
+            <li><a href="#api"><i class="fas fa-plug"></i> API методы</a></li>
+            <li><a href="#hooks"><i class="fas fa-link"></i> Хуки и события</a></li>
+            <li><a href="#config"><i class="fas fa-cog"></i> Конфигурация</a></li>
+            <li><a href="#examples"><i class="fas fa-code"></i> Примеры</a></li>
+            <li><a href="#testing"><i class="fas fa-vial"></i> Тестирование</a></li>
+            <li><a href="#deploy"><i class="fas fa-cloud-upload-alt"></i> Публикация</a></li>
+            <li><a href="#security"><i class="fas fa-shield-alt"></i> Безопасность</a></li>
+            <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="social-link">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="social-link">
+                <i class="fab fa-telegram"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="Документация разработчика">Документация разработчика</h1>
+                <h2 class="subtitle">Nexus Userbot</h2>
+                <p class="hero-description">Полное руководство по созданию модулей для Nexus</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span class="stat-number">100+</span>
+                        <span class="stat-label">Модулей</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span class="stat-number">5K+</span>
+                        <span class="stat-label">Пользователей</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Stars</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="intro" class="fade-in">
+            <h2><i class="fas fa-book"></i> Введение</h2>
+            <p>Nexus - это продвинутый Telegram userbot с поддержкой модульной системы. Модули позволяют расширять функциональность бота, добавляя новые команды и возможности.</p>
+            
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <div class="card-icon">🎯</div>
+                    <h3>Простота</h3>
+                    <p>Интуитивный API для быстрой разработки</p>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Производительность</h3>
+                    <p>Оптимизированная работа с Telegram API</p>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Безопасность</h3>
+                    <p>Встроенная защита и изоляция модулей</p>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">🎨</div>
+                    <h3>Гибкость</h3>
+                    <p>Полная кастомизация и расширяемость</p>
+                </div>
+            </div>
+            
+            <div class="info-box pulse">
+                <h3><i class="fas fa-graduation-cap"></i> Что вы узнаете:</h3>
+                <ul>
+                    <li><i class="fas fa-check"></i> Как создать свой первый модуль</li>
+                    <li><i class="fas fa-check"></i> Работа с командами и обработчиками</li>
+                    <li><i class="fas fa-check"></i> Использование inline элементов</li>
+                    <li><i class="fas fa-check"></i> Работа с базой данных</li>
+                    <li><i class="fas fa-check"></i> Лучшие практики безопасности</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="quickstart" class="fade-in">
+            <h2><i class="fas fa-rocket"></i> Быстрый старт</h2>
+            <p>Создайте файл <code>mymodule.py</code> в папке <code>loaded_modules/</code>:</p>
+            
+            <div class="code-block">
+                <pre><code>from .. import loader, utils
+
+class MyModuleMod(loader.Module):
+    """Описание вашего модуля"""
+    
+    strings = {
+        "name": "MyModule",
+        "hello": "👋 Привет, {}!"
+    }
+    
+    @loader.command()
+    async def hello(self, message):
+        """Приветствие пользователя"""
+        await utils.answer(message, self.strings["hello"].format(
+            message.sender.first_name
+        ))</code></pre>
+            </div>
+            
+            <p>Загрузите модуль командой: <code>.loadmod mymodule</code></p>
+        </section>
+
+        <section id="structure" class="fade-in">
+            <h2><i class="fas fa-sitemap"></i> Структура модуля</h2>
+            
+            <h3>Базовый класс</h3>
+            <div class="code-block">
+                <pre><code>from .. import loader, utils
+
+class ModuleNameMod(loader.Module):
+    """Описание модуля (обязательно)"""
+    
+    strings = {
+        "name": "ModuleName",  # Имя модуля
+        "key": "Значение"      # Строки для локализации
+    }
+    
+    strings_ru = {
+        "key": "Значение на русском"
+    }
+    
+    def __init__(self):
+        """Инициализация модуля"""
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "option",
+                "default",
+                "Описание опции"
+            )
+        )
+    
+    async def client_ready(self, client, db):
+        """Вызывается при запуске бота"""
+        self.client = client
+        self.db = db</code></pre>
+            </div>
+
+            <h3>Обязательные элементы</h3>
+            <ul>
+                <li><strong>Имя класса:</strong> Должно заканчиваться на <code>Mod</code></li>
+                <li><strong>Docstring:</strong> Описание модуля (обязательно)</li>
+                <li><strong>strings["name"]:</strong> Имя модуля</li>
+            </ul>
+        </section>
+
+        <section id="commands" class="fade-in">
+            <h2><i class="fas fa-terminal"></i> Команды</h2>
+            
+            <h3>Простая команда</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def mycommand(self, message):
+    """Описание команды"""
+    await utils.answer(message, "Ответ")</code></pre>
+            </div>
+
+            <h3>Команда с аргументами</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def echo(self, message):
+    """&lt;текст&gt; - Повторить текст"""
+    args = utils.get_args_raw(message)
+    if not args:
+        await utils.answer(message, "❌ Укажите текст!")
+        return
+    
+    await utils.answer(message, f"📢 {args}")</code></pre>
+            </div>
+
+            <h3>Команда с reply</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def info(self, message):
+    """Информация о сообщении"""
+    reply = await message.get_reply_message()
+    if not reply:
+        await utils.answer(message, "❌ Ответьте на сообщение!")
+        return
+    
+    info = f"👤 От: {reply.sender_id}\n📅 Дата: {reply.date}"
+    await utils.answer(message, info)</code></pre>
+            </div>
+
+            <h3>Watcher (обработчик всех сообщений)</h3>
+            <div class="code-block">
+                <pre><code>@loader.watcher()
+async def watcher(self, message):
+    """Обрабатывает все входящие сообщения"""
+    if "trigger" in message.text.lower():
+        await message.reply("Обнаружен триггер!")</code></pre>
+            </div>
+        </section>
+
+        <section id="inline" class="fade-in">
+            <h2><i class="fas fa-mouse-pointer"></i> Inline элементы</h2>
+            
+            <h3>Inline кнопки</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def menu(self, message):
+    """Показать меню с кнопками"""
+    await self.inline.form(
+        message=message,
+        text="🎯 Выберите действие:",
+        reply_markup=[
+            [{"text": "✅ Кнопка 1", "callback": self.button1}],
+            [{"text": "❌ Кнопка 2", "callback": self.button2}],
+            [{"text": "🔄 Обновить", "callback": self.refresh}]
+        ]
+    )
+
+async def button1(self, call):
+    """Обработчик кнопки 1"""
+    await call.answer("Нажата кнопка 1", show_alert=True)
+    await call.edit("✅ Выбрана кнопка 1")</code></pre>
+            </div>
+
+            <h3>Inline галерея</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def gallery(self, message):
+    """Показать галерею"""
+    await self.inline.gallery(
+        message=message,
+        items=[
+            {
+                "text": "Слайд 1",
+                "photo": "https://example.com/1.jpg"
+            },
+            {
+                "text": "Слайд 2",
+                "photo": "https://example.com/2.jpg"
+            }
+        ]
+    )</code></pre>
+            </div>
+
+            <h3>Inline список</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def list(self, message):
+    """Показать список"""
+    await self.inline.list(
+        message=message,
+        strings=[
+            "📌 Элемент 1",
+            "📌 Элемент 2",
+            "📌 Элемент 3"
+        ]
+    )</code></pre>
+            </div>
+        </section>
+
+        <section id="database" class="fade-in">
+            <h2><i class="fas fa-database"></i> База данных</h2>
+            
+            <h3>Сохранение данных</h3>
+            <div class="code-block">
+                <pre><code># Сохранить значение
+self.db.set("ModuleName", "key", "value")
+
+# Получить значение
+value = self.db.get("ModuleName", "key", default="default_value")
+
+# Удалить значение
+self.db.delete("ModuleName", "key")
+
+# Получить все данные модуля
+all_data = self.db.get("ModuleName", "__config__", {})</code></pre>
+            </div>
+
+            <h3>Пример использования</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def setname(self, message):
+    """&lt;имя&gt; - Сохранить имя"""
+    name = utils.get_args_raw(message)
+    if not name:
+        await utils.answer(message, "❌ Укажите имя!")
+        return
+    
+    self.db.set("MyModule", "username", name)
+    await utils.answer(message, f"✅ Имя сохранено: {name}")
+
+@loader.command()
+async def getname(self, message):
+    """Получить сохраненное имя"""
+    name = self.db.get("MyModule", "username", "Не задано")
+    await utils.answer(message, f"👤 Имя: {name}")</code></pre>
+            </div>
+        </section>
+
+        <section id="api" class="fade-in">
+            <h2><i class="fas fa-plug"></i> API методы</h2>
+            
+            <h3>Работа с сообщениями</h3>
+            <div class="code-block">
+                <pre><code># Отправить сообщение
+await utils.answer(message, "Текст")
+
+# Получить аргументы команды
+args = utils.get_args_raw(message)  # Строка
+args_list = utils.get_args(message)  # Список
+
+# Получить reply сообщение
+reply = await message.get_reply_message()
+
+# Удалить сообщение
+await message.delete()
+
+# Редактировать сообщение
+await message.edit("Новый текст")</code></pre>
+            </div>
+
+            <h3>Работа с чатами</h3>
+            <div class="code-block">
+                <pre><code># Получить информацию о чате
+chat = await message.get_chat()
+
+# Получить участников чата
+async for user in self.client.iter_participants(chat):
+    print(user.id, user.first_name)
+
+# Отправить сообщение в чат
+await self.client.send_message(chat_id, "Текст")</code></pre>
+            </div>
+
+            <h3>Работа с пользователями</h3>
+            <div class="code-block">
+                <pre><code># Получить информацию о пользователе
+user = await self.client.get_entity(user_id)
+
+# Получить себя
+me = await self.client.get_me()
+
+# Проверка прав
+if message.sender_id == me.id:
+    # Это наше сообщение
+    pass</code></pre>
+            </div>
+
+            <h3>HTTP запросы</h3>
+            <div class="code-block">
+                <pre><code>import aiohttp
+
+async with aiohttp.ClientSession() as session:
+    async with session.get("https://api.example.com") as resp:
+        data = await resp.json()
+        
+    async with session.post("https://api.example.com", json={"key": "value"}) as resp:
+        result = await resp.text()</code></pre>
+            </div>
+        </section>
+
+        <section id="hooks" class="fade-in">
+            <h2><i class="fas fa-link"></i> Хуки и события</h2>
+            
+            <h3>Жизненный цикл модуля</h3>
+            <div class="code-block">
+                <pre><code>async def on_load(self):
+    """Вызывается при загрузке модуля"""
+    pass
+
+async def on_unload(self):
+    """Вызывается при выгрузке модуля"""
+    pass
+
+async def client_ready(self, client, db):
+    """Вызывается когда клиент готов"""
+    self.client = client
+    self.db = db</code></pre>
+            </div>
+
+            <h3>Обработка событий</h3>
+            <div class="code-block">
+                <pre><code>@loader.watcher("in")  # Только входящие
+async def in_watcher(self, message):
+    pass
+
+@loader.watcher("out")  # Только исходящие
+async def out_watcher(self, message):
+    pass
+
+@loader.watcher("only_messages")  # Только сообщения
+async def msg_watcher(self, message):
+    pass</code></pre>
+            </div>
+        </section>
+
+        <section id="config" class="fade-in">
+            <h2><i class="fas fa-cog"></i> Конфигурация модуля</h2>
+            
+            <h3>Создание настроек</h3>
+            <div class="code-block">
+                <pre><code>def __init__(self):
+    self.config = loader.ModuleConfig(
+        loader.ConfigValue(
+            "api_key",
+            None,
+            "API ключ для сервиса",
+            validator=loader.validators.String()
+        ),
+        loader.ConfigValue(
+            "timeout",
+            30,
+            "Таймаут запросов (сек)",
+            validator=loader.validators.Integer(minimum=1)
+        ),
+        loader.ConfigValue(
+            "enabled",
+            True,
+            "Включить модуль",
+            validator=loader.validators.Boolean()
+        )
+    )</code></pre>
+            </div>
+
+            <h3>Использование настроек</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def mycommand(self, message):
+    api_key = self.config["api_key"]
+    timeout = self.config["timeout"]
+    
+    if not self.config["enabled"]:
+        return
+    
+    # Используем настройки
+    await utils.answer(message, f"Timeout: {timeout}")</code></pre>
+            </div>
+        </section>
+
+        <section id="examples" class="fade-in">
+            <h2><i class="fas fa-code"></i> Примеры модулей</h2>
+            
+            <h3>Счетчик сообщений</h3>
+            <div class="code-block">
+                <pre><code>from .. import loader, utils
+
+class MessageCounterMod(loader.Module):
+    """Счетчик сообщений в чате"""
+    
+    strings = {"name": "MessageCounter"}
+    
+    @loader.watcher()
+    async def watcher(self, message):
+        chat_id = str(message.chat_id)
+        count = self.db.get("MessageCounter", chat_id, 0)
+        self.db.set("MessageCounter", chat_id, count + 1)
+    
+    @loader.command()
+    async def msgcount(self, message):
+        """Показать количество сообщений"""
+        chat_id = str(message.chat_id)
+        count = self.db.get("MessageCounter", chat_id, 0)
+        await utils.answer(message, f"📊 Сообщений в чате: {count}")</code></pre>
+            </div>
+
+            <h3>Напоминания</h3>
+            <div class="code-block">
+                <pre><code>from .. import loader, utils
+import asyncio
+
+class ReminderMod(loader.Module):
+    """Модуль напоминаний"""
+    
+    strings = {"name": "Reminder"}
+    
+    @loader.command()
+    async def remind(self, message):
+        """&lt;секунды&gt; &lt;текст&gt; - Напоминание"""
+        args = utils.get_args_raw(message)
+        try:
+            seconds, text = args.split(maxsplit=1)
+            seconds = int(seconds)
+        except:
+            await utils.answer(message, "❌ Использование: .remind &lt;сек&gt; &lt;текст&gt;")
+            return
+        
+        await utils.answer(message, f"⏰ Напомню через {seconds} сек")
+        await asyncio.sleep(seconds)
+        await message.reply(f"🔔 Напоминание: {text}")</code></pre>
+            </div>
+
+            <h3>Калькулятор</h3>
+            <div class="code-block">
+                <pre><code>from .. import loader, utils
+
+class CalculatorMod(loader.Module):
+    """Простой калькулятор"""
+    
+    strings = {"name": "Calculator"}
+    
+    @loader.command()
+    async def calc(self, message):
+        """&lt;выражение&gt; - Вычислить"""
+        expr = utils.get_args_raw(message)
+        if not expr:
+            await utils.answer(message, "❌ Укажите выражение!")
+            return
+        
+        try:
+            result = eval(expr, {"__builtins__": {}})
+            await utils.answer(message, f"🔢 {expr} = {result}")
+        except Exception as e:
+            await utils.answer(message, f"❌ Ошибка: {e}")</code></pre>
+            </div>
+        </section>
+
+        <section id="testing" class="fade-in">
+            <h2><i class="fas fa-vial"></i> Тестирование модулей</h2>
+            
+            <h3>Отладка</h3>
+            <div class="code-block">
+                <pre><code>import logging
+
+logger = logging.getLogger(__name__)
+
+@loader.command()
+async def test(self, message):
+    logger.debug("Debug message")
+    logger.info("Info message")
+    logger.warning("Warning message")
+    logger.error("Error message")</code></pre>
+            </div>
+
+            <h3>Обработка ошибок</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def safe(self, message):
+    try:
+        result = await risky_operation()
+        await utils.answer(message, f"✅ {result}")
+    except ValueError as e:
+        await utils.answer(message, f"❌ Ошибка значения: {e}")
+    except Exception as e:
+        logger.exception("Unexpected error")
+        await utils.answer(message, "❌ Произошла ошибка")</code></pre>
+            </div>
+        </section>
+
+        <section id="deploy" class="fade-in">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Публикация модуля</h2>
+            
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Требования к модулю</h3>
+                <ul>
+                    <li><i class="fas fa-check"></i> Понятное имя и описание</li>
+                    <li><i class="fas fa-check"></i> Документация для всех команд</li>
+                    <li><i class="fas fa-check"></i> Обработка ошибок</li>
+                    <li><i class="fas fa-check"></i> Соблюдение стиля кода (Black)</li>
+                    <li><i class="fas fa-check"></i> Отсутствие вредоносного кода</li>
+                </ul>
+            </div>
+
+            <h3>Загрузка в репозиторий</h3>
+            <div class="code-block">
+                <pre><code># 1. Создайте репозиторий на GitHub
+# 2. Добавьте файл модуля
+# 3. Создайте README.md с описанием
+# 4. Добавьте requirements.txt если нужны зависимости
+
+# Структура репозитория:
+my-module/
+├── mymodule.py
+├── README.md
+└── requirements.txt</code></pre>
+            </div>
+
+            <h3>Установка модуля пользователями</h3>
+            <div class="code-block">
+                <pre><code>.dlmod https://github.com/username/my-module/raw/main/mymodule.py</code></pre>
+            </div>
+        </section>
+
+        <section id="security" class="fade-in">
+            <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
+            
+            <div class="warning-box">
+                <h3>⚠️ Важные правила безопасности</h3>
+                <ul>
+                    <li>Никогда не используйте <code>eval()</code> с пользовательским вводом без ограничений</li>
+                    <li>Не храните токены и пароли в открытом виде</li>
+                    <li>Проверяйте права доступа перед выполнением критичных операций</li>
+                    <li>Используйте <code>try-except</code> для обработки ошибок</li>
+                    <li>Не доверяйте данным от пользователей</li>
+                </ul>
+            </div>
+
+            <h3>Проверка прав</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def admin_cmd(self, message):
+    """Команда только для владельца"""
+    me = await self.client.get_me()
+    if message.sender_id != me.id:
+        return  # Игнорируем чужие команды
+    
+    # Выполняем команду
+    await utils.answer(message, "✅ Выполнено")</code></pre>
+            </div>
+
+            <h3>Безопасная работа с API</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def apikey(self, message):
+    """&lt;ключ&gt; - Сохранить API ключ"""
+    key = utils.get_args_raw(message)
+    if not key:
+        await utils.answer(message, "❌ Укажите ключ!")
+        return
+    
+    # Сохраняем в БД (не в коде!)
+    self.db.set("MyModule", "api_key", key)
+    
+    # Удаляем сообщение с ключом
+    await message.delete()
+    
+    await self.client.send_message(
+        message.chat_id,
+        "✅ API ключ сохранен"
+    )</code></pre>
+            </div>
+
+            <h3>Обработка ошибок</h3>
+            <div class="code-block">
+                <pre><code>@loader.command()
+async def safe_cmd(self, message):
+    """Безопасная команда"""
+    try:
+        # Опасная операция
+        result = await some_risky_operation()
+        await utils.answer(message, f"✅ {result}")
+    except ValueError as e:
+        await utils.answer(message, f"❌ Неверное значение: {e}")
+    except Exception as e:
+        await utils.answer(message, f"❌ Ошибка: {e}")
+        # Логируем для отладки
+        import logging
+        logging.exception("Error in safe_cmd")</code></pre>
+            </div>
+        </section>
+
+        <section id="faq" class="fade-in">
+            <h2><i class="fas fa-question-circle"></i> Часто задаваемые вопросы</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Как загрузить модуль?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Используйте команду <code>.loadmod имя_файла</code> или <code>.dlmod URL</code> для загрузки из интернета.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Где хранятся модули?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Модули хранятся в папке <code>loaded_modules/</code> в корне проекта.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Как обновить модуль?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Используйте <code>.unloadmod имя</code> затем <code>.loadmod файл</code> или просто перезагрузите бота.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Можно ли использовать внешние библиотеки?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, установите их через <code>pip install</code> и импортируйте в модуле.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Как сделать команду приватной?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Проверяйте <code>message.sender_id</code> и сравнивайте с вашим ID.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Nexus Userbot</h3>
+                    <p>Продвинутый Telegram userbot с модульной системой</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Ссылки</h3>
+                    <a href="https://github.com/archfay/Nexus"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="https://t.me/Nexus_Talking"><i class="fab fa-telegram"></i> Telegram</a>
+                    <a href="https://nexus-ub.xyz"><i class="fas fa-globe"></i> Website</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Документация</h3>
+                    <a href="#intro">Введение</a>
+                    <a href="#quickstart">Быстрый старт</a>
+                    <a href="#examples">Примеры</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Nexus Userbot | Made with <i class="fas fa-heart"></i> by Nexus Community</p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

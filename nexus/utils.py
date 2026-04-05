@@ -24,7 +24,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -44,6 +44,8 @@ import signal
 import string
 import time
 import typing
+import socket
+import shutil
 from datetime import timedelta
 from urllib.parse import urlparse
 import emoji
@@ -125,7 +127,7 @@ from herokutl.tl.types import (
 from ._internal import fw_protect
 from .inline.types import BotInlineCall, InlineCall, InlineMessage
 from .tl_cache import CustomTelegramClient
-from .types import NexusReplyMarkup, ListLike, Module
+from .types import nexusReplyMarkup, ListLike, Module
 
 FormattingEntity = typing.Union[
     MessageEntityUnknown,
@@ -368,8 +370,23 @@ async def get_user(message: Message) -> typing.Optional[User]:
         logger.error("User isn't in the group where they sent the message")
         return None
 
-    logger.error("`peer_id` is not a user, chat or channel")
-    return None
+async def safe_edit_message(
+    client: CustomTelegramClient, chat_id: int, message_id: int, text: str
+) -> bool:
+    """Try to edit a message; on failure send a new message and remove old one when possible."""
+    try:
+        await client.edit_message(chat_id, message_id, text)
+        return True
+    except Exception:
+        logger.debug("edit_message failed for %s:%s, attempting fallback", chat_id, message_id, exc_info=True)
+        try:
+            await client.send_message(chat_id, text)
+            with contextlib.suppress(Exception):
+                await client.delete_messages(chat_id, message_id)
+            return True
+        except Exception:
+            logger.exception("safe_edit_message fallback failed for %s:%s", chat_id, message_id)
+            return False
 
 
 def run_sync(func, *args, **kwargs):
@@ -499,7 +516,7 @@ async def answer(
     message: typing.Union[Message, InlineCall, InlineMessage],
     response: str,
     *,
-    reply_markup: typing.Optional[NexusReplyMarkup] = None,
+    reply_markup: typing.Optional[nexusReplyMarkup] = None,
     **kwargs,
 ) -> typing.Union[InlineCall, InlineMessage, Message]:
     """
@@ -705,8 +722,8 @@ def merge(a: dict, b: dict, /) -> dict:
                 b[key] = list(set(b[key] + a[key]))
             else:
                 b[key] = a[key]
-
-        b[key] = a[key]
+        else:
+            b[key] = a[key]
 
     return b
 
@@ -1020,29 +1037,29 @@ def get_platform_emoji() -> str:
 
     BASE = "".join(
         (
-            "<emoji document_id={}>🪐</emoji>",
-            "<emoji document_id=5352934134618549768>🪐</emoji>",
-            "<emoji document_id=5352663371290271790>🪐</emoji>",
-            "<emoji document_id=5350822883314655367>🪐</emoji>",
+            "<emoji document_id={}>🌐</emoji>",
+            "<emoji document_id=5273920871109533513>🌐</emoji>",
+            "<emoji document_id=5271520091765250082>🌐</emoji>",
+            "<emoji document_id=5273962764220535903>🌐</emoji>",
         )
     )
 
     if main.IS_HIKKAHOST:
-        return BASE.format(5395745114494624362)
+        return BASE.format(5271757856859788351)
 
     if main.IS_JAMHOST:
-        return BASE.format(5242536621659678947)
+        return BASE.format(5271757856859788351)
 
     if main.IS_USERLAND:
-        return BASE.format(5458877818031077824)
+        return BASE.format(5271757856859788351)
 
     if main.IS_LAVHOST:
-        return BASE.format(5352753797531721191)
+        return BASE.format(5271757856859788351)
 
     if main.IS_DOCKER:
-        return BASE.format(5352678227582152630)
+        return BASE.format(5271757856859788351)
 
-    return BASE.format(5393588431026674882)
+    return BASE.format(5271757856859788351)
 
 
 def get_platform_named_emoji() -> str:
@@ -1492,7 +1509,7 @@ def get_commit_url() -> str:
     """
     try:
         hash_ = get_git_hash()
-        return f'<a href="https://github.com/DoNotWeb/Nexus/commit/{hash_}">#{hash_[:7]}</a>'
+        return f'<a href="https://github.com/archfay/Nexus/commit/{hash_}">#{hash_[:7]}</a>'
     except Exception:
         return "Unknown"
 
@@ -1818,6 +1835,87 @@ def get_cpu_usage():
 init_ts = time.perf_counter()
 
 
+# Premium emoji IDs for bot messages
+PREMIUM_EMOJIS = [
+    5188377234380954537,  # 🌐
+    5314250708508220914,  # ✅
+    5451732530048802485,  # ⏳
+    5436040291507247633,  # 🎉
+    5210952531676504517,  # 🚫
+    5312383351217201533,  # ⚠️
+    5472308992514464048,  # 🔐
+    5784993237412351403,  # ✅
+    5197474765387864959,  # 👍
+    5386399931378440814,  # 😎
+    5447644880824181073,  # ⚠️
+    5355133243773435190,  # ☝️
+    5974674704788891783,  # ⚙️
+    5469791106591890404,  # 🪄
+    5424885441100782420,  # 👀
+    5870704313440932932,  # 🔒
+    5870772616305839506,  # 👥
+    5870450390679425417,  # 🗒
+    5228879218363872764,  # ⌨️
+    5213452215527677338,  # ⏳
+    5332533929020761310,  # ✅
+    5452023368054216810,  # 🥶
+    5208634061085492935,  # 📖
+    5472111548572900003,  # ⌨️
+    5118861066981344121,  # ✅
+    5431736674147114227,  # 🗂
+    5774134533590880843,  # 🔄
+    5469718869536940860,  # 👆
+    5256113064821926998,  # 📁
+    5134452506935427991,  # 🌐
+    5873204392429096339,  # 🔄
+    5341492148468465410,  # 📦
+    5287454910059654880,  # 🫶
+    5363805650327450240,  # 🌐
+    5471952986970267163,  # 💎
+    6037284117505116849,  # 🌐
+    5469741319330996757,  # 💫
+    5467666648263564704,  # ❓
+    5325787248363314644,  # 🫥
+    5197688912457245639,  # ✅
+    5318933532825888187,  # ⚙️
+    5472146462362048818,  # 💡
+    5454225457916420314,  # 😖
+    5372981976804366741,  # 🤖
+    5350594756126721186,  # 🌐
+    5328311576736833844,  # 🚀
+    5875145601682771643,  # 🚀
+    5458450833857322148,  # 👌
+    6003424016977628379,  # 🔒
+    5877458226823302157,  # 🕒
+    5877477244938489129,  # 🚫
+    5370699111492229743,  # 😌
+    5424728541650494040,  # 😕
+    5370881342659631698,  # 😢
+    5188377234380954537,  # 🌐
+    5472238129849048175,  # 😎
+    5474667187258006816,  # 😎
+    5472267631979405211,  # 🚫
+    5465665476971471368,  # ❌
+    5427052514094619126,  # 🤷♀️
+    5382187118216879236,  # ❓
+    6019094432790354513,  # 📢
+    6019130940012370273,  # 💬
+    6019151079114021083,  # 💬
+    5375368793209972850,  # 🖋
+    5226512880362332956,  # 📖
+]
+
+
+def add_premium_emoji(text: str) -> str:
+    """
+    Add random premium emoji to bot message
+    :param text: Message text
+    :return: Text with premium emoji
+    """
+    emoji_id = random.choice(PREMIUM_EMOJIS)
+    return f'<emoji document_id={emoji_id}>🌐</emoji> {text}'
+
+
 # GeekTG Compatibility
 def get_git_info() -> typing.Tuple[str, str]:
     """
@@ -1827,7 +1925,7 @@ def get_git_info() -> typing.Tuple[str, str]:
     hash_ = get_git_hash()
     return (
         hash_,
-        f"https://github.com/DoNotWeb/Nexus/commit/{hash_}" if hash_ else "",
+        f"https://github.com/archfay/Nexus/commit/{hash_}" if hash_ else "",
     )
 
 

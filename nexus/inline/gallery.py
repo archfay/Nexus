@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -36,7 +36,7 @@ from herokutl.extensions.html import CUSTOM_EMOJIS
 from herokutl.tl.types import Message
 
 from .. import main, utils
-from ..types import NexusReplyMarkup
+from ..types import nexusReplyMarkup
 from .types import InlineMessage, InlineUnit
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ class Gallery(InlineUnit):
         next_handler: typing.Union[callable, typing.List[str]],
         caption: typing.Union[typing.List[str], str, callable] = "",
         *,
-        custom_buttons: typing.Optional[NexusReplyMarkup] = None,
+        custom_buttons: typing.Optional[nexusReplyMarkup] = None,
         force_me: bool = False,
         always_allow: typing.Optional[typing.List[int]] = None,
         manual_security: bool = False,
@@ -262,12 +262,9 @@ class Gallery(InlineUnit):
                 status_message = await (
                     message.edit if message.out else message.respond
                 )(
-                    (
-                        utils.get_platform_emoji()
-                        if self._client.nexus_me.premium and CUSTOM_EMOJIS
-                        else "🪐"
-                    )
-                    + self.translator.getkey("inline.opening_gallery"),
+                    utils.add_premium_emoji(
+                        self.translator.getkey("inline.opening_gallery")
+                    ),
                     **({"reply_to": utils.get_topic(message)} if message.out else {}),
                 )
             except Exception:

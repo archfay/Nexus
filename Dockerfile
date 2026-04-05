@@ -43,7 +43,7 @@ RUN rm -rf /var/lib/apt/lists/ /var/cache/apt/archives/ /tmp/*
 WORKDIR /data
 RUN mkdir /data/private
 
-RUN git clone https://github.com/DoNotWeb/Nexus /data/Nexus
+RUN git clone https://github.com/archfay/Nexus /data/Nexus
 WORKDIR /data/Nexus
 RUN git fetch && git checkout master && git pull
 

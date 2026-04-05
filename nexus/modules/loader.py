@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -74,25 +74,25 @@ class LoaderMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "MODULES_REPO",
-                "https://raw.githubusercontent.com/DoNotWeb/modules/main",
-                lambda: self.strings("repo_config_doc"),
+                "https://raw.githubusercontent.com/archfay/modules/main",
+                "Main modules repository URL",
                 validator=loader.validators.Link(),
             ),
             loader.ConfigValue(
                 "ADDITIONAL_REPOS",
                 [],
-                lambda: self.strings("add_repo_config_doc"),
+                "Additional modules repositories",
                 validator=loader.validators.Series(validator=loader.validators.Link()),
             ),
             loader.ConfigValue(
                 "share_link",
-                doc=lambda: self.strings("share_link_doc"),
+                doc="Share module link after loading",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
                 "basic_auth",
                 None,
-                lambda: self.strings("basic_auth_doc"),
+                "Basic authentication for repositories (format: username:password)",
                 validator=loader.validators.Hidden(
                     loader.validators.RegExp(r"^.*:.*$")
                 ),
@@ -100,7 +100,7 @@ class LoaderMod(loader.Module):
             loader.ConfigValue(
                 "command_emoji",
                 "<emoji document_id=5197195523794157505>▫️</emoji>",
-                lambda: "Emoji for command",
+                "Emoji for command",
             ),
         )
 
@@ -108,7 +108,7 @@ class LoaderMod(loader.Module):
         modules = list(
             filter(
                 lambda x: not x.startswith(
-                    "https://raw.githubusercontent.com/DoNotWeb/modules/main"
+                    "https://raw.githubusercontent.com/archfay/modules/main"
                 ),
                 utils.array_sum(
                     map(
@@ -404,7 +404,7 @@ class LoaderMod(loader.Module):
         ):
             if message.file:
                 await message.edit("")
-                message = await message.respond("🪐", reply_to=utils.get_topic(message))
+                message = await message.respond("🌐", reply_to=utils.get_topic(message))
 
             if await self.inline.form(
                 self.strings("module_fs"),
@@ -480,7 +480,7 @@ class LoaderMod(loader.Module):
                 "💫 <b>Joined <a"
                 f' href="https://t.me/{channel.username}">{utils.escape_html(channel.title)}</a></b>'
             ),
-            photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/joined_jr.png",
+            photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/joined_jr.png",
         )
 
     async def install_requirements(self, requirements: list):
@@ -580,6 +580,15 @@ class LoaderMod(loader.Module):
             except TypeError:
                 pass
 
+            # Замена неправильных названий пакетов
+            package_map = {
+                "nexus.tl": "heroku-tl-new",
+                "hikka.tl": "heroku-tl-new",
+                "telethon": "heroku-tl-new",
+                "herokutl": "heroku-tl-new",
+            }
+            requirements = [package_map.get(req.lower(), req) for req in requirements]
+
             if requirements:
                 await self.install_requirements(requirements)
 
@@ -660,17 +669,25 @@ class LoaderMod(loader.Module):
                     save_fs=save_fs,
                 )
             except ImportError as e:
-                logger.info(
-                    "Module loading failed, attemping dependency installation (%s)",
-                    e.name,
-                )
-                requirements = [
-                    {
-                        "sklearn": "scikit-learn",
-                        "pil": "Pillow",
-                        "herokutl": "Nexus-TL-New",
-                    }.get(e.name.lower(), e.name)
-                ]
+                # Пропускаем логирование для nexus.tl
+                if e.name and "nexus.tl" not in e.name.lower():
+                    logger.info(
+                        "Module loading failed, attemping dependency installation (%s)",
+                        e.name,
+                    )
+                
+                # Игнорируем несуществующие пакеты - они уже есть
+                if e.name and any(x in e.name.lower() for x in ["nexus.tl", "hikka.tl", "herokutl", "telethon"]):
+                    kwargs = utils.get_kwargs()
+                    kwargs["did_requirements"] = True
+                    return await self.load_module(**kwargs)
+                
+                # Замена неправильных названий пакетов
+                package_map = {
+                    "sklearn": "scikit-learn",
+                    "pil": "Pillow",
+                }
+                requirements = [package_map.get(e.name.lower(), e.name)]
 
                 if not requirements:
                     raise Exception("Nothing to install") from e
@@ -869,6 +886,12 @@ class LoaderMod(loader.Module):
             None,
         )
 
+        placeholders = [
+            line.replace(" ", "").split("#placeholder:", maxsplit=1)[1]
+            for line in doc.splitlines()
+            if line.replace(" ", "").startswith("#placeholder:")
+        ]
+
         pack_url = next(
             (
                 line.replace(" ", "").split("#packurl:", maxsplit=1)[1]
@@ -951,8 +974,18 @@ class LoaderMod(loader.Module):
             else ""
         )
 
+        placeholders_info = (
+            "\n<emoji document_id=5472308992514464048>🔖</emoji> <b>Placeholders:</b>\n"
+            + "\n".join(
+                f"<emoji document_id=5197195523794157505>▫️</emoji> <code>{p}</code>"
+                for p in placeholders
+            )
+            if placeholders
+            else ""
+        )
+
         def loaded_msg(use_subscribe: bool = True):
-            nonlocal modname, version, modhelp, developer, origin, subscribe, blob_link, depends_from
+            nonlocal modname, version, modhelp, developer, origin, subscribe, blob_link, depends_from, placeholders_info
             return self.strings("loaded").format(
                 modname.strip(),
                 version,
@@ -967,7 +1000,7 @@ class LoaderMod(loader.Module):
                 ),
                 blob_link,
                 subscribe if use_subscribe else "",
-            )
+            ) + placeholders_info
 
         if developer:
             if developer.startswith("@") and developer not in self.get(

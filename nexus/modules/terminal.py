@@ -22,7 +22,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -324,7 +324,7 @@ class TerminalMod(loader.Module):
             loader.ConfigValue(
                 "FLOOD_WAIT_PROTECT",
                 2,
-                lambda: self.strings("fw_protect"),
+                "Flood wait protection timeout",
                 validator=loader.validators.Integer(minimum=0),
             ),
         )

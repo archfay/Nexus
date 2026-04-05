@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -34,33 +34,28 @@ class Help(loader.Module):
             loader.ConfigValue(
                 "core_emoji",
                 "<emoji document_id=4974681956907221809>▪️</emoji>",
-                lambda: "Core module bullet",
+                "Core module bullet",
             ),
             loader.ConfigValue(
                 "plain_emoji",
                 "<emoji document_id=4974508259839836856>▪️</emoji>",
-                lambda: "Plain module bullet",
+                "Plain module bullet",
             ),
             loader.ConfigValue(
                 "empty_emoji",
                 "<emoji document_id=5100652175172830068>🟠</emoji>",
-                lambda: "Empty modules bullet",
+                "Empty modules bullet",
             ),
             loader.ConfigValue(
                 "desc_icon",
-                "<emoji document_id=5188377234380954537>🪐</emoji>",
-                lambda: "Desc emoji",
+                "<emoji document_id=5188377234380954537>🌐</emoji>",
+                "Desc emoji",
             ),
             loader.ConfigValue(
                 "command_emoji",
                 "<emoji document_id=5197195523794157505>▫️</emoji>",
-                lambda: "Emoji for command",
+                "Emoji for command",
             ),
-            # loader.ConfigValue(
-            #     "banner_url",
-            #     None,
-            #     lambda: "banner for help",
-            # ),
         )  # отложенно до фикса
 
     @loader.command(
@@ -157,7 +152,7 @@ class Help(loader.Module):
         )
 
         reply = "{} <b>{}</b>:".format(
-            "<emoji document_id=5134452506935427991>🪐</emoji>", _name, ""
+            "<emoji document_id=5134452506935427991>🌐</emoji>", _name, ""
         )
         inline_cmd = ""
         cmds = ""

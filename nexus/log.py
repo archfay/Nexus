@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -100,7 +100,7 @@ def override_text(exception: Exception) -> typing.Optional[str]:
     return None
 
 
-class NexusException:
+class nexusException:
     def __init__(
         self,
         message: str,
@@ -122,7 +122,7 @@ class NexusException:
         tb: traceback.TracebackException,
         stack: typing.Optional[typing.List[inspect.FrameInfo]] = None,
         comment: typing.Optional[typing.Any] = None,
-    ) -> "NexusException":
+    ) -> "nexusException":
         def to_hashable(dictionary: dict) -> dict:
             dictionary = dictionary.copy()
             for key, value in dictionary.items():
@@ -301,7 +301,7 @@ class TelegramLogsHandler(logging.Handler):
         self,
         call: BotInlineCall,
         bot: "aiogram.Bot",  # type: ignore  # noqa: F821
-        item: NexusException,
+        item: nexusException,
     ):
         client_id = next(
             (cid for cid, mod in self._mods.items() if mod.logchat == call.chat_id),
@@ -309,7 +309,7 @@ class TelegramLogsHandler(logging.Handler):
         )
         sanitize = self._mods_settings.get(client_id, {}).get("sanitize_logs", True)
         
-        msg = item.message + "\n\n<b>🪐 Full traceback:</b>\n" + item.full_stack
+        msg = item.message + "\n\n<b>🌐 Full traceback:</b>\n" + item.full_stack
         if sanitize:
             msg = sanitize_text(msg)
 
@@ -323,7 +323,7 @@ class TelegramLogsHandler(logging.Handler):
         for chunk in chunks[1:]:
             await bot.send_message(chat_id=call.chat_id, text=chunk)
 
-    def _gen_web_debug_button(self, item: NexusException) -> list:
+    def _gen_web_debug_button(self, item: nexusException) -> list:
         if not item.sysinfo:
             return []
 
@@ -353,7 +353,7 @@ class TelegramLogsHandler(logging.Handler):
     async def _start_debugger(
         self,
         call: "InlineCall",  # type: ignore  # noqa: F821
-        item: NexusException,
+        item: nexusException,
     ):
         if not self.web_debugger:
             self.web_debugger = WebDebugger()
@@ -431,7 +431,7 @@ class TelegramLogsHandler(logging.Handler):
                         reply_markup=self._mods[client_id].inline.generate_markup(
                             [
                                 {
-                                    "text": "🪐 Full traceback",
+                                    "text": "🌐 Full traceback",
                                     "callback": self._show_full_trace,
                                     "args": (
                                         self._mods[client_id].inline.bot,
@@ -444,7 +444,7 @@ class TelegramLogsHandler(logging.Handler):
                         ),
                     )
                     for item in self.tg_buff
-                    if isinstance(item[0], NexusException)
+                    if isinstance(item[0], nexusException)
                     and (not item[1] or item[1] == client_id or self.force_send_all)
                 ]
                 for client_id in self._mods
@@ -535,7 +535,7 @@ class TelegramLogsHandler(logging.Handler):
                 except Exception:
                     comment = f"{record.msg} {record.args}"
 
-                exc = NexusException.from_exc_info(
+                exc = nexusException.from_exc_info(
                     *record.exc_info,
                     stack=record.__dict__.get("stack", None),
                     comment=comment,

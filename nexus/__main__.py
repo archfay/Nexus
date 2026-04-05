@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -32,21 +32,34 @@ def get_file_hash(filename):
 
 
 def deps():
-    subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "--upgrade",
-            "-q",
-            "--disable-pip-version-check",
-            "--no-warn-script-location",
-            "-r",
-            "requirements.txt",
-        ],
-        check=True,
-    )
+    env = os.environ.copy()
+    env["PYO3_USE_ABI3_FORWARD_COMPATIBILITY"] = "1"
+    
+    # Определяем флаги для pip в зависимости от окружения
+    pip_flags = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "--upgrade",
+        "-q",
+        "--disable-pip-version-check",
+        "--no-warn-script-location",
+    ]
+    
+    # Добавляем --user если не в Docker, не root и не в virtualenv
+    if (
+        "DOCKER" not in os.environ
+        and getpass.getuser() != "root"
+        and not hasattr(sys, "real_prefix")
+        and sys.base_prefix == sys.prefix
+    ):
+        pip_flags.append("--user")
+    
+    pip_flags.extend(["-r", "requirements.txt"])
+    
+    subprocess.run(pip_flags, check=True, env=env)
+    
     with open(".requirements_hash", "w") as f:
         f.write(get_file_hash("requirements.txt"))
 

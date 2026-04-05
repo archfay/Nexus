@@ -6,13 +6,12 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
 import git
 import time
-import git
 import psutil
 import os
 import glob
@@ -33,31 +32,33 @@ import getpass
 
 
 @loader.tds
-class NexusInfoMod(loader.Module):
+class nexusInfoMod(loader.Module):
     """Show userbot info"""
 
-    strings = {"name": "NexusInfo"}
+    strings = {"name": "nexusInfo"}
 
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "custom_message",
-                doc=lambda: self.strings("_cfg_cst_msg"),
+                "",
+                "Custom message template for info command",
             ),
             loader.ConfigValue(
                 "banner_url",
-                "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_info.png",
-                lambda: self.strings("_cfg_banner"),
+                "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_info.png",
+                "Banner URL or local path for info command",
             ),
             loader.ConfigValue(
                 "show_nexus",
                 True,
+                "Show Nexus branding in info",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
                 "ping_emoji",
-                "🪐",
-                lambda: self.strings["ping_emoji"],
+                "🌐",
+                "Emoji for ping measurement",
                 validator=loader.validators.String(),
             ),
             loader.ConfigValue(
@@ -84,6 +85,20 @@ class NexusInfoMod(loader.Module):
                         return line.split("=")[1].strip().strip('"')
         except FileNotFoundError:
             return self.strings["non_detectable"]
+
+
+
+    def _get_gpu_info(self):
+        try:
+            import subprocess
+            result = subprocess.run(['lspci'], capture_output=True, text=True, timeout=2)
+            for line in result.stdout.split('\n'):
+                if 'VGA' in line or 'Display' in line or '3D' in line:
+                    gpu = line.split(': ')[-1] if ': ' in line else line
+                    return gpu.strip()
+            return "Unknown"
+        except Exception:
+            return "Unknown"
 
     def remove_emoji_and_html(self, text: str) -> str:
         reg = r"<[^<]+?>"
@@ -161,8 +176,8 @@ class NexusInfoMod(loader.Module):
         ]:
             platform = platform.replace(emoji, icon)
         return (
-            ("🪐 Nexus\n" if self.config["show_nexus"] else "")
-            + self.config["custom_message"].format(
+            ("🌐 Nexus\n" if self.config["show_nexus"] else "")
+            + (self.config["custom_message"] if self.config["custom_message"] else "").format(
                 me=me,
                 version=_version,
                 build=build,
@@ -171,7 +186,12 @@ class NexusInfoMod(loader.Module):
                 upd=upd,
                 uptime=utils.formatted_uptime(),
                 cpu_usage=utils.get_cpu_usage(),
-                ram_usage=f"{utils.get_ram_usage()} MB",
+                ram_usage=round(psutil.Process().memory_info().rss / (1024**2), 2),
+                ram=round(psutil.virtual_memory().total / (1024**2), 2),
+                disk=round(psutil.disk_usage('/').total / (1024**3), 2),
+                disk_usage=psutil.disk_usage('/').percent,
+                processor=lib_platform.processor() or "Unknown",
+                gpu=self._get_gpu_info(),
                 branch=version.branch,
                 hostname=lib_platform.node(),
                 user=getpass.getuser(),
@@ -306,32 +326,62 @@ class NexusInfoMod(loader.Module):
     @loader.command()
     async def infocmd(self, message: Message):
         start = time.perf_counter_ns()
+        
+        # Определяем источник баннера
+        banner_source = None
+        banner_url = self.config["banner_url"]
+        
+        if banner_url:
+            if banner_url.startswith(("http://", "https://")):
+                banner_source = banner_url
+            elif os.path.exists(banner_url):
+                banner_source = banner_url
+        
+        # Дефолтный баннер если пользователь не установил свой
+        if not banner_source:
+            banner_source = "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_info.png"
+        
         if self.config["switchInfo"]:
-            if self._get_info_photo(start) is None:
+            photo = await utils.run_sync(self._get_info_photo, start)
+            if photo is None:
                 await utils.answer(message, self.strings["incorrect_img_format"])
                 return
 
             await utils.answer_file(
                 message,
-                self._get_info_photo(start),
+                photo,
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )
-        elif self.config["custom_message"] is None:
-            await utils.answer(
-                message,
-                self._render_info(start),
-                file=self.config["banner_url"],
-                reply_to=getattr(message, "reply_to_msg_id", None),
-            )
+        elif not self.config["custom_message"]:
+            try:
+                await utils.answer(
+                    message,
+                    self._render_info(start),
+                    file=banner_source,
+                    reply_to=getattr(message, "reply_to_msg_id", None),
+                )
+            except Exception:
+                await utils.answer(
+                    message,
+                    self._render_info(start),
+                    reply_to=getattr(message, "reply_to_msg_id", None),
+                )
         else:
             if "{ping}" in self.config["custom_message"]:
                 message = await utils.answer(message, self.config["ping_emoji"])
-            await utils.answer(
-                message,
-                self._render_info(start),
-                file=self.config["banner_url"],
-                reply_to=getattr(message, "reply_to_msg_id", None),
-            )
+            try:
+                await utils.answer(
+                    message,
+                    self._render_info(start),
+                    file=banner_source,
+                    reply_to=getattr(message, "reply_to_msg_id", None),
+                )
+            except Exception:
+                await utils.answer(
+                    message,
+                    self._render_info(start),
+                    reply_to=getattr(message, "reply_to_msg_id", None),
+                )
 
     @loader.command()
     async def nexusinfo(self, message: Message):
@@ -353,3 +403,25 @@ class NexusInfoMod(loader.Module):
             await utils.answer(message, self.strings["switchinfo_on"])
         else:
             await utils.answer(message, self.strings["switchinfo_off"])
+
+    @loader.command()
+    async def setbanner(self, message: Message):
+        """<reply to photo/url> - Set banner for info command"""
+        if message.is_reply:
+            reply = await message.get_reply_message()
+            if reply.photo or reply.document:
+                banner_path = f"{os.getcwd()}/assets/info_banner.jpg"
+                await reply.download_media(banner_path)
+                self.config["banner_url"] = banner_path
+                await utils.answer(message, "✅ Баннер успешно установлен!")
+                return
+        
+        args = utils.get_args_raw(message)
+        if args and utils.check_url(args):
+            self.config["banner_url"] = args
+            await utils.answer(message, "✅ Баннер успешно установлен!")
+        else:
+            await utils.answer(
+                message,
+                "❌ Ответьте на фото или укажите URL\n\nИспользование:\n<code>.setbanner</code> (ответ на фото)\n<code>.setbanner <url></code>"
+            )

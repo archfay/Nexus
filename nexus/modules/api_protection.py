@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -91,25 +91,25 @@ class APIRatelimiterMod(loader.Module):
             loader.ConfigValue(
                 "time_sample",
                 15,
-                lambda: self.strings("_cfg_time_sample"),
+                "Time sample for rate limiting (seconds)",
                 validator=loader.validators.Integer(minimum=1),
             ),
             loader.ConfigValue(
                 "threshold",
                 100,
-                lambda: self.strings("_cfg_threshold"),
+                "Request threshold for rate limiting",
                 validator=loader.validators.Integer(minimum=10),
             ),
             loader.ConfigValue(
                 "local_floodwait",
                 30,
-                lambda: self.strings("_cfg_local_floodwait"),
+                "Local floodwait timeout (seconds)",
                 validator=loader.validators.Integer(minimum=10, maximum=3600),
             ),
             loader.ConfigValue(
                 "forbidden_methods",
                 ["joinChannel", "importChatInvite"],
-                lambda: self.strings("_cfg_forbidden_methods"),
+                "List of forbidden API methods",
                 validator=loader.validators.MultiChoice(
                     [
                         "sendReaction",

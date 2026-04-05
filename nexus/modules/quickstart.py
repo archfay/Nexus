@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -38,7 +38,7 @@ class Quickstart(loader.Module):
 
     async def client_ready(self):
         await self.request_join(
-            "nexus_talks",
+            "Nexus_Talking",
             "Nexus help is only available in this chat. By agreeing to join the chat, you agree to the Nexus federation rules and if you violate them, you will be permanently banned.",
         )
 
@@ -46,7 +46,7 @@ class Quickstart(loader.Module):
             [
                 {
                     "text": self.strings("btn_support"),
-                    "url": "https://t.me/nexus_talks",
+                    "url": "https://t.me/Nexus_Talking",
                 }
             ],
         ] + utils.chunks(

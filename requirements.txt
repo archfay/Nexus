@@ -1,5 +1,9 @@
-heroku-tl-new==1.7.2
+heroku-tl-new>=2.0.0
 Pillow
 orjson>=3.9.0
+aiohttp==3.11.18
+aiogram>=3.26.0
+setuptools==69.0.0
+pet-pet-gif
 
-# Python 3.9+
+# Python 3.10+

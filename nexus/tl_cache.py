@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -224,47 +224,13 @@ class CustomTelegramClient(TelegramClient):
 
         return await self.get_entity(*args, force=True, **kwargs)
 
-    async def send_message(self, *args, **kwargs):
-        """
-        Wrapper around TelegramClient.send_message that parses message text
-        through herokutl.extensions.html to produce entities, including
-        custom/premium emoji entities when enabled.
-
-        Usage mirrors TelegramClient.send_message signature.
-        """
-        try:
-            # signature: send_message(entity, message, **kwargs)
-            entity = args[0] if len(args) > 0 else kwargs.get("entity")
-            message = args[1] if len(args) > 1 else kwargs.get("message")
-
-            # If message is a string and entities not explicitly provided,
-            # attempt to parse it (this will produce MessageEntityCustomEmoji
-            # entries where appropriate if CUSTOM_EMOJIS is enabled).
-            if isinstance(message, str) and "entities" not in kwargs:
-                try:
-                    import herokutl.extensions.html as _html
-
-                    if getattr(_html, "CUSTOM_EMOJIS", False):
-                        text, entities = _html.parse(message)
-                        # replace args/kwargs with parsed text + entities
-                        # build new args list
-                        new_args = list(args)
-                        if len(new_args) > 1:
-                            new_args[1] = text
-                        else:
-                            kwargs["message"] = text
-                        kwargs["entities"] = entities
-                        args = tuple(new_args)
-                except Exception:
-                    # parsing failed; fall back to original message
-                    pass
-
-        except Exception:
-            # Non-fatal; continue with defaults
-            pass
-
-        # Call base implementation
-        return await super().send_message(*args, **kwargs)
+    async def send_message(self, *args, **kwargs) -> Message:
+        return await self._topic_guesser(
+            super().send_message,
+            inspect.stack(),
+            *args,
+            **kwargs,
+        )
 
     async def get_entity(
         self,
@@ -679,7 +645,7 @@ class CustomTelegramClient(TelegramClient):
         # ⚠️⚠️  WARNING!  ⚠️⚠️
         # If you are a module developer, and you'll try to bypass this protection to
         # force user join your channel, you will be added to SCAM modules
-        # list and you will be banned from Nexus federation.
+        # list and you will be banned from nexus federation.
         # Let USER decide, which channel he will follow. Do not be so petty
         # I hope, you understood me.
         # Thank you

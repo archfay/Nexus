@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -28,7 +28,7 @@ from meval import meval
 from io import StringIO
 
 from .. import loader, main, utils
-from ..log import NexusException
+from ..log import nexusException
 
 
 class Brainfuck:
@@ -157,10 +157,6 @@ class Evaluator(loader.Module):
 
     @loader.command(alias="eval")
     async def e(self, message: Message):
-        # basic protection: only allow owner to run eval unless explicitly enabled
-        if getattr(message, "from_id", None) and message.from_id != self._client.nexus_me.id:
-            await utils.answer(message, "🚫 Permission denied: eval allowed only for owner")
-            return
 
         try:
             t0 = time.perf_counter()
@@ -175,7 +171,7 @@ class Evaluator(loader.Module):
             print_output = output_print.getvalue()
 
         except Exception:
-            item = NexusException.from_exc_info(*sys.exc_info())
+            item = nexusException.from_exc_info(*sys.exc_info())
 
             await utils.answer(
                 message,

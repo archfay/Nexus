@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -55,7 +55,7 @@ from .pointers import PointerDict, PointerList
 
 __all__ = [
     "JSONSerializable",
-    "NexusReplyMarkup",
+    "nexusReplyMarkup",
     "ListLike",
     "Command",
     "StringLoader",
@@ -78,7 +78,7 @@ logger = logging.getLogger(__name__)
 
 
 JSONSerializable = typing.Union[str, int, float, bool, list, dict, None]
-NexusReplyMarkup = typing.Union[typing.List[typing.List[dict]], typing.List[dict], dict]
+nexusReplyMarkup = typing.Union[typing.List[typing.List[dict]], typing.List[dict], dict]
 ListLike = typing.Union[list, set, tuple]
 Command = typing.Callable[..., typing.Awaitable[typing.Any]]
 
@@ -338,7 +338,7 @@ class Module:
                 "✖️ <b>Declined joining <a"
                 f' href="https://t.me/{channel.username}">{utils.escape_html(channel.title)}</a></b>'
             ),
-            photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/declined_jr.png",
+            photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/declined_jr.png",
         )
 
     async def request_join(
@@ -396,34 +396,63 @@ class Module:
             )
         )
 
-        await self.inline.bot.send_photo(
-            self.tg_id,
-            "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/join_request.png",
-            caption=(
-                self._client.loader.lookup("translations")
-                .strings("requested_join")
-                .format(
-                    self.__class__.__name__,
-                    channel.username,
-                    utils.escape_html(channel.title),
-                    utils.escape_html(reason),
-                )
-            ),
-            reply_markup=self.inline.generate_markup(
-                [
-                    {
-                        "text": "💫 Approve",
-                        "callback": self.lookup("loader").approve_internal,
-                        "args": (channel, event),
-                    },
-                    {
-                        "text": "✖️ Decline",
-                        "callback": self._decline,
-                        "args": (channel, event),
-                    },
-                ]
-            ),
-        )
+        try:
+            await self.inline.bot.send_photo(
+                self.tg_id,
+                "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/join_request.png",
+                caption=(
+                    self._client.loader.lookup("translations")
+                    .strings("requested_join")
+                    .format(
+                        self.__class__.__name__,
+                        channel.username,
+                        utils.escape_html(channel.title),
+                        utils.escape_html(reason),
+                    )
+                ),
+                reply_markup=self.inline.generate_markup(
+                    [
+                        {
+                            "text": "💫 Approve",
+                            "callback": self.lookup("loader").approve_internal,
+                            "args": (channel, event),
+                        },
+                        {
+                            "text": "✖️ Decline",
+                            "callback": self._decline,
+                            "args": (channel, event),
+                        },
+                    ]
+                ),
+            )
+        except Exception:
+            await self.inline.bot.send_message(
+                self.tg_id,
+                (
+                    self._client.loader.lookup("translations")
+                    .strings("requested_join")
+                    .format(
+                        self.__class__.__name__,
+                        channel.username,
+                        utils.escape_html(channel.title),
+                        utils.escape_html(reason),
+                    )
+                ),
+                reply_markup=self.inline.generate_markup(
+                    [
+                        {
+                            "text": "💫 Approve",
+                            "callback": self.lookup("loader").approve_internal,
+                            "args": (channel, event),
+                        },
+                        {
+                            "text": "✖️ Decline",
+                            "callback": self._decline,
+                            "args": (channel, event),
+                        },
+                    ]
+                ),
+            )
 
         self.nexus_wait_channel_approve = (
             self.__class__.__name__,
@@ -807,7 +836,7 @@ class ModuleConfig(dict):
         if callable(ret):
             try:
                 # Compatibility tweak
-                # does nothing in Nexus
+                # does nothing in nexus
                 ret = ret(message)
             except Exception:
                 ret = ret()
@@ -821,6 +850,15 @@ class ModuleConfig(dict):
     def __setitem__(self, key: str, value: typing.Any):
         self._config[key].value = value
         super().__setitem__(key, value)
+        
+        # Сохраняем в базу данных сразу после изменения
+        try:
+            if hasattr(self, '_module_name') and hasattr(self, '_db'):
+                config_data = self._db.get(self._module_name, "__config__", {})
+                config_data[key] = value
+                self._db.set(self._module_name, "__config__", config_data)
+        except Exception:
+            pass
 
     def set_no_raise(self, key: str, value: typing.Any):
         self._config[key].set_no_raise(value)
@@ -1057,7 +1095,7 @@ class CacheRecordFullChannel:
         return hash(record) == hash(self)
 
     def __hash__(self) -> int:
-        return hash((self._hashable_entity, self._hashable_user))
+        return hash(self.channel_id)
 
     def __str__(self) -> str:
         return f"CacheRecordFullChannel of {self.channel_id}"
@@ -1084,7 +1122,7 @@ class CacheRecordFullUser:
         return hash(record) == hash(self)
 
     def __hash__(self) -> int:
-        return hash((self._hashable_entity, self._hashable_user))
+        return hash(self.user_id)
 
     def __str__(self) -> str:
         return f"CacheRecordFullUser of {self.user_id}"

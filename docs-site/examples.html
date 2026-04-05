@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Примеры модулей - Nexus Userbot</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .example-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a14 100%);
+            border: 2px solid #2a2a3e;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .example-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2594cb, #4db8e8);
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+            border-color: #2594cb;
+            box-shadow: 0 10px 30px rgba(37, 148, 203, 0.4);
+        }
+        
+        .example-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .example-icon {
+            font-size: 36px;
+            filter: drop-shadow(0 0 10px rgba(37, 148, 203, 0.4));
+        }
+        
+        .example-title {
+            font-size: 22px;
+            color: #2594cb;
+            margin: 0;
+        }
+        
+        .example-description {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .example-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tag {
+            background: rgba(37, 148, 203, 0.2);
+            color: #2594cb;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(37, 148, 203, 0.3);
+        }
+        
+        .example-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2594cb, #1a73a8);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(37, 148, 203, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #2594cb;
+        }
+        
+        .difficulty {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .difficulty-easy {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .difficulty-medium {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        
+        .difficulty-hard {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid #2594cb;
+            box-shadow: 0 10px 50px rgba(37, 148, 203, 0.4);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: #2594cb;
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🚀</div>
+            <h2>Nexus</h2>
+            <p class="version">v2.0</p>
+        </div>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="examples.html" class="active"><i class="fas fa-code"></i> Примеры</a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="social-link">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="social-link">
+                <i class="fab fa-telegram"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="Примеры модулей">Примеры модулей</h1>
+                <p class="hero-description">Готовые модули для изучения и использования</p>
+            </div>
+        </header>
+
+        <section class="fade-in">
+            <h2><i class="fas fa-fire"></i> Популярные модули</h2>
+            
+            <div class="example-grid">
+                <!-- Weather Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-easy">Легко</span>
+                    <div class="example-header">
+                        <div class="example-icon">🌤️</div>
+                        <h3 class="example-title">Weather</h3>
+                    </div>
+                    <p class="example-description">Получение информации о погоде в любом городе с использованием OpenWeatherMap API</p>
+                    <div class="example-tags">
+                        <span class="tag">API</span>
+                        <span class="tag">HTTP</span>
+                        <span class="tag">JSON</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('weather')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('weather')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Translator Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-easy">Легко</span>
+                    <div class="example-header">
+                        <div class="example-icon">🌐</div>
+                        <h3 class="example-title">Translator</h3>
+                    </div>
+                    <p class="example-description">Перевод текста на разные языки с автоопределением исходного языка</p>
+                    <div class="example-tags">
+                        <span class="tag">API</span>
+                        <span class="tag">i18n</span>
+                        <span class="tag">Reply</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('translator')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('translator')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notes Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-medium">Средне</span>
+                    <div class="example-header">
+                        <div class="example-icon">📝</div>
+                        <h3 class="example-title">Notes</h3>
+                    </div>
+                    <p class="example-description">Система заметок с категориями, поиском и inline кнопками управления</p>
+                    <div class="example-tags">
+                        <span class="tag">Database</span>
+                        <span class="tag">Inline</span>
+                        <span class="tag">CRUD</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('notes')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('notes')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Crypto Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-medium">Средне</span>
+                    <div class="example-header">
+                        <div class="example-icon">💰</div>
+                        <h3 class="example-title">CryptoPrice</h3>
+                    </div>
+                    <p class="example-description">Отслеживание курсов криптовалют в реальном времени с графиками</p>
+                    <div class="example-tags">
+                        <span class="tag">API</span>
+                        <span class="tag">Charts</span>
+                        <span class="tag">Real-time</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('crypto')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('crypto')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AutoReply Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-medium">Средне</span>
+                    <div class="example-header">
+                        <div class="example-icon">🤖</div>
+                        <h3 class="example-title">AutoReply</h3>
+                    </div>
+                    <p class="example-description">Автоматические ответы на сообщения по ключевым словам и триггерам</p>
+                    <div class="example-tags">
+                        <span class="tag">Watcher</span>
+                        <span class="tag">Regex</span>
+                        <span class="tag">Config</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('autoreply')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('autoreply')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Spotify Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-hard">Сложно</span>
+                    <div class="example-header">
+                        <div class="example-icon">🎵</div>
+                        <h3 class="example-title">Spotify</h3>
+                    </div>
+                    <p class="example-description">Управление Spotify: текущий трек, плейлисты, поиск музыки</p>
+                    <div class="example-tags">
+                        <span class="tag">OAuth</span>
+                        <span class="tag">API</span>
+                        <span class="tag">Media</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('spotify')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('spotify')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ChatGPT Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-hard">Сложно</span>
+                    <div class="example-header">
+                        <div class="example-icon">🧠</div>
+                        <h3 class="example-title">ChatGPT</h3>
+                    </div>
+                    <p class="example-description">Интеграция с ChatGPT для умных ответов и генерации контента</p>
+                    <div class="example-tags">
+                        <span class="tag">AI</span>
+                        <span class="tag">OpenAI</span>
+                        <span class="tag">Async</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('chatgpt')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('chatgpt')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-medium">Средне</span>
+                    <div class="example-header">
+                        <div class="example-icon">📊</div>
+                        <h3 class="example-title">ChatStats</h3>
+                    </div>
+                    <p class="example-description">Статистика чатов: активность, топ пользователей, графики</p>
+                    <div class="example-tags">
+                        <span class="tag">Analytics</span>
+                        <span class="tag">Database</span>
+                        <span class="tag">Charts</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('stats')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('stats')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reminder Module -->
+                <div class="example-card">
+                    <span class="difficulty difficulty-easy">Легко</span>
+                    <div class="example-header">
+                        <div class="example-icon">⏰</div>
+                        <h3 class="example-title">Reminder</h3>
+                    </div>
+                    <p class="example-description">Система напоминаний с поддержкой повторяющихся событий</p>
+                    <div class="example-tags">
+                        <span class="tag">Asyncio</span>
+                        <span class="tag">Scheduler</span>
+                        <span class="tag">Database</span>
+                    </div>
+                    <div class="example-actions">
+                        <button class="btn btn-primary" onclick="showCode('reminder')">
+                            <i class="fas fa-code"></i> Код
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadModule('reminder')">
+                            <i class="fas fa-download"></i> Скачать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 id="modalTitle"></h2>
+            <div class="code-block" id="modalCode"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+    <script src="examples.js"></script>
+</body>
+</html>

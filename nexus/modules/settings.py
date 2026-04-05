@@ -7,7 +7,7 @@ import contextlib
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -126,7 +126,7 @@ class CoreMod(loader.Module):
                 (
                     utils.get_platform_emoji()
                     if self._client.nexus_me.premium and CUSTOM_EMOJIS
-                    else "🪐 <b>Nexus userbot</b>"
+                    else "🌐 <b>Nexus userbot</b>"
                 ),
                 *version.__version__,
                 utils.get_commit_url(),
@@ -137,7 +137,7 @@ class CoreMod(loader.Module):
                 if version.branch == "master"
                 else self.strings("unstable").format(version.branch)
             ),
-            file="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_cmd.png",
+            file="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus.png",
             reply_to=getattr(message, "reply_to_msg_id", None),
         )
 
@@ -390,14 +390,14 @@ class CoreMod(loader.Module):
                 self.strings("choose_installation"),
                 message,
                 reply_markup=self._markup,
-                photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_installation.png",
+                photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_installation.png",
                 disable_security=True,
             )
         ):
 
             await self.client.send_file(
                 message.peer_id,
-                "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_installation.png",
+                "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_installation.png",
                 caption=self.strings("vds_install"),
                 reply_to=getattr(message, "reply_to_msg_id", None),
             )

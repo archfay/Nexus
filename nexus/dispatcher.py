@@ -24,7 +24,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -284,17 +284,38 @@ class CommandDispatcher:
         initiator = getattr(event, "sender_id", 0)
 
         main_prefix = self._db.get(main.__name__, "command_prefix", ".")
+        multi_prefixes = self._db.get(main.__name__, "multi_prefixes", [])
+        
         if initiator == self._client.tg_id:
-            prefix = main_prefix
+            prefixes = [main_prefix] + multi_prefixes
         else:
             prefix = self._db.get(main.__name__, "command_prefixes", {})
-            prefix = prefix.get(str(initiator), main_prefix)
+            prefixes = [prefix.get(str(initiator), main_prefix)]
 
         change = str.maketrans(ru_keys + en_keys, en_keys + ru_keys)
         message = utils.censor(event.message)
 
         if not event.message.message:
             return False
+        
+        # Определяем, какой префикс используется
+        prefix = None
+        for p in prefixes:
+            if message.message.startswith(p):
+                prefix = p
+                break
+        
+        if prefix is None:
+            # Проверяем транслитерацию
+            for p in prefixes:
+                if message.message.startswith(str.translate(p, change)):
+                    prefix = p
+                    message.message = str.translate(message.message, change)
+                    message.text = str.translate(message.text, change)
+                    break
+            
+            if prefix is None:
+                return False
 
         if (
             message.out
@@ -306,7 +327,7 @@ class CommandDispatcher:
                 and any(s != str.translate(prefix, change) for s in message.message)
             )
         ):
-            # Allow escaping commands using .'s
+            # Allow escaping commands using prefix
             if not watcher:
                 await message.edit(
                     message.message[len(prefix) :],
@@ -316,15 +337,6 @@ class CommandDispatcher:
                         or (),
                     ),
                 )
-            return False
-
-        if (
-            event.message.message.startswith(str.translate(prefix, change))
-            and str.translate(prefix, change) != prefix
-        ):
-            message.message = str.translate(message.message, change)
-            message.text = str.translate(message.text, change)
-        elif not event.message.message.startswith(prefix):
             return False
 
         if (
@@ -604,9 +616,7 @@ class CommandDispatcher:
             ),
         }
 
-        # Check if chat_id is defined before using it
-        if not hasattr(self, 'chat_id'):
-            self.chat_id = None
+
 
         return (
             "no_commands"

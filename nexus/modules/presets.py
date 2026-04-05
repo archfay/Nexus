@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -339,7 +339,7 @@ class Presets(loader.Module):
         """| Packs of modules to load"""
         await self.inline.form(
             message=message,
-            photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/presets_cmd.png",
+            photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/presets_cmd.png",
             text=self.strings("welcome").replace(
                 "/presets", self.get_prefix() + "presets"
             ),

@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -80,7 +80,7 @@ class NexusWebMod(loader.Module):
                             },
                             {"text": self.strings("btn_no"), "action": "close"},
                         ],
-                        photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/web_interface.png",
+                        photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/web_interface.png",
                     ):
                         raise Exception
                 except Exception:
@@ -114,7 +114,7 @@ class NexusWebMod(loader.Module):
                     self.strings("opening_tunnel"),
                     reply_markup={"text": "🕔 Wait...", "data": "empty"},
                     photo=(
-                        "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/opening_tunnel.png"
+                        "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/opening_tunnel.png"
                     ),
                 )
             else:
@@ -123,7 +123,7 @@ class NexusWebMod(loader.Module):
                     message=message,
                     reply_markup={"text": "🕔 Wait...", "data": "empty"},
                     photo=(
-                        "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/opening_tunnel.png"
+                        "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/opening_tunnel.png"
                     ),
                 )
 
@@ -132,7 +132,7 @@ class NexusWebMod(loader.Module):
             await form.edit(
                 self.strings("tunnel_opened"),
                 reply_markup={"text": self.strings("web_btn"), "url": url},
-                photo="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/tunnel_opened.png",
+                photo="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/tunnel_opened.png",
             )
 
     @loader.command()

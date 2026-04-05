@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -45,7 +45,7 @@ class InlineStuff(loader.Module):
 
         await message.delete()
 
-        m = await message.respond("🪐", reply_to=utils.get_topic(message))
+        m = await message.respond("🌐", reply_to=utils.get_topic(message))
 
         await self.inline.gallery(
             message=m,
@@ -130,7 +130,7 @@ class InlineStuff(loader.Module):
 
         if message.text == "/start":
             await message.answer_photo(
-                "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/start_cmd.png",
+                "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/start_cmd.png",
                 caption=(
                     self.strings("this_is_nexus")
                     + "\n\n<blockquote>• Prefix: "
@@ -145,7 +145,7 @@ class InlineStuff(loader.Module):
                 await message.answer("❌ You are not allowed to use this")
             else:
                 await message.answer_photo(
-                    "https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/start_cmd.png",
+                    "https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/start_cmd.png",
                     caption=self.strings["profile_cmd"].format(
                         prefix=self.get_prefix(),
                         ram_usage=utils.get_ram_usage(),

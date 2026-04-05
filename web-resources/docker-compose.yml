@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  nexus-website:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - SECRET_KEY=change-this-secret-key
+    restart: unless-stopped
+    volumes:
+      - ./static:/app/static:ro
+      - ./pages:/app/pages:ro

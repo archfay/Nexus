@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -42,7 +42,7 @@ from aiogram.exceptions import (
 )
 
 from .. import utils
-from ..types import NexusReplyMarkup
+from ..types import nexusReplyMarkup
 from .types import InlineCall, InlineUnit
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 class Utils(InlineUnit):
     def _generate_markup(
         self,
-        markup_obj: typing.Optional[typing.Union[NexusReplyMarkup, str]],
+        markup_obj: typing.Optional[typing.Union[nexusReplyMarkup, str]],
     ) -> typing.Optional[InlineKeyboardMarkup]:
         """Generate markup for form or list of `dict`s"""
         if not markup_obj:
@@ -116,6 +116,18 @@ class Utils(InlineUnit):
                 try:
                     raw_text = button.get("text", "")
                     text = str(raw_text)
+                    
+                    # Get button style from ButtonColor module
+                    button_style = None
+                    try:
+                        for mod in self._allmodules.modules:
+                            if mod.__class__.__name__ == "ButtonColorMod":
+                                button_style = mod.get_button_style(text)
+                                if button_style:
+                                    logger.debug(f"Button '{text}' got style: {button_style}")
+                                break
+                    except Exception as e:
+                        logger.debug(f"Error getting button style: {e}")
 
                     icon_id = None
                     m = re.search(r'<emoji document_id=?"?(\d+)"?>', text)
@@ -126,6 +138,13 @@ class Utils(InlineUnit):
                     _button_kwargs = {}
                     if icon_id:
                         _button_kwargs["icon_custom_emoji_id"] = icon_id
+                    
+                    # Check if button has explicit color/style
+                    if "color" in button:
+                        _button_kwargs["style"] = button["color"]
+                    elif button_style:
+                        _button_kwargs["style"] = button_style
+                        logger.debug(f"Applied style {button_style} to button '{text}'")
                     if "url" in button:
                         if not utils.check_url(button["url"]):
                             logger.warning(
@@ -307,7 +326,7 @@ class Utils(InlineUnit):
         return None
 
     def _normalize_markup(
-        self, reply_markup: NexusReplyMarkup
+        self, reply_markup: nexusReplyMarkup
     ) -> typing.List[typing.List[typing.Dict[str, typing.Any]]]:
         if isinstance(reply_markup, dict):
             return [[reply_markup]]
@@ -325,7 +344,7 @@ class Utils(InlineUnit):
     async def _edit_unit(
         self,
         text: typing.Optional[str] = None,
-        reply_markup: typing.Optional[NexusReplyMarkup] = None,
+        reply_markup: typing.Optional[nexusReplyMarkup] = None,
         *,
         photo: typing.Optional[str] = None,
         file: typing.Optional[str] = None,
@@ -754,7 +773,7 @@ class Utils(InlineUnit):
 
     def _validate_markup(
         self,
-        buttons: typing.Optional[NexusReplyMarkup],
+        buttons: typing.Optional[nexusReplyMarkup],
     ) -> typing.List[typing.List[typing.Dict[str, typing.Any]]]:
         if buttons is None:
             buttons = []

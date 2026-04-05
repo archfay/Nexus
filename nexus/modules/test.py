@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -83,25 +83,25 @@ class TestMod(loader.Module):
             loader.ConfigValue(
                 "Text_Of_Ping",
                 "<emoji document_id=5920515922505765329>⚡️</emoji> <b>𝙿𝚒𝚗𝚐: </b><code>{ping}</code><b> 𝚖𝚜 </b>\n<emoji document_id=5900104897885376843>🕓</emoji><b> 𝚄𝚙𝚝𝚒𝚖𝚎: </b><code>{uptime}</code>",
-                lambda: self.strings["configping"],
+                "Text format for ping command",
                 validator=loader.validators.String(),
             ),
             loader.ConfigValue(
                 "hint",
                 None,
-                lambda: self.strings["hint"],
+                "Hint text for ping command",
                 validator=loader.validators.String(),
             ),
             loader.ConfigValue(
                 "ping_emoji",
-                "🪐",
-                lambda: self.strings["ping_emoji"],
+                "🌐",
+                "Emoji for ping command",
                 validator=loader.validators.String(),
             ),
             loader.ConfigValue(
                 "banner_url",
                 None,
-                lambda: self.strings["banner_url"],
+                "Banner URL for ping command",
                 validator=loader.validators.String(),
             ),
         )
@@ -264,7 +264,7 @@ class TestMod(loader.Module):
             *main.__version__,
             (
                 " <a"
-                f' href="https://github.com/DoNotWeb/Nexus/commit/{ghash}">@{ghash[:8]}</a>'
+                f' href="https://github.com/archfay/Nexus/commit/{ghash}">@{ghash[:8]}</a>'
                 if ghash
                 else ""
             ),
@@ -324,10 +324,10 @@ class TestMod(loader.Module):
         chat, _ = await utils.asset_channel(
             self._client,
             "nexus-logs",
-            "🪐 Your Nexus logs will appear in this chat",
+            "🌐 Your Nexus logs will appear in this chat",
             silent=True,
             invite_bot=True,
-            avatar="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_logs.png",
+            avatar="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_logs.png",
         )
 
         self.logchat = int(f"-100{chat.id}")

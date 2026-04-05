@@ -25,7 +25,7 @@ from meval import meval
 from io import StringIO
 
 from .. import loader, utils
-from ..log import NexusException
+from ..log import nexusException
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class Executor(loader.Module):
             loader.ConfigValue(
                 "hide_phone",
                 True,
-                lambda: self.strings["no_phone"],
+                "Hide phone number in output",
                 validator=loader.validators.Boolean(),
             ),
         )

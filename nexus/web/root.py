@@ -2,13 +2,13 @@
 
 # ©️ Dan Gazizullin, 2021-2023
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/hikariatama/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -44,6 +44,7 @@ from .. import database, main, utils
 from .._internal import restart
 from ..tl_cache import CustomTelegramClient
 from ..version import __version__
+from ._session_helper import save_session_to_db
 
 DATA_DIR = (
     "/data"
@@ -69,6 +70,10 @@ class Web:
         self.proxy = kwargs.pop("proxy")
 
         self.app.router.add_get("/", self.root)
+        self.app.router.add_get("/test", self.test_page)
+        self.app.router.add_get("/pages/docs.html", self.docs_page)
+        self.app.router.add_get("/pages/dashboard.html", self.dashboard_page)
+        self.app.router.add_get("/pages/modules.html", self.modules_page)
         self.app.router.add_put("/set_api", self.set_tg_api)
         self.app.router.add_post("/send_tg_code", self.send_tg_code)
         self.app.router.add_post("/check_session", self.check_session)
@@ -80,6 +85,9 @@ class Web:
         self.app.router.add_post("/get_qr_url", self.get_qr_url)
         self.app.router.add_post("/qr_2fa", self.qr_2fa)
         self.app.router.add_post("/can_add", self.can_add)
+        self.app.router.add_post("/api/auth/check", self.api_auth_check)
+        self.app.router.add_post("/api/auth/setup", self.api_auth_setup)
+        self.app.router.add_post("/api/auth/login", self.api_auth_login)
         self.api_set = asyncio.Event()
         self.clients_set = asyncio.Event()
 
@@ -110,13 +118,101 @@ class Web:
         ]
 
     @aiohttp_jinja2.template("root.jinja2")
-    async def root(self, _):
+    async def root(self, request):
+        """Главная страница"""
+        logger.info(f"Root page access, client_data: {bool(self.client_data)}, sessions: {len(self._sessions)}")
         return {
             "skip_creds": self.api_token is not None,
             "tg_done": bool(self.client_data),
             "lavhost": "LAVHOST" in os.environ,
             "platform_emoji": self._platform_emoji,
         }
+    
+    async def test_page(self, request):
+        """Тестовая страница"""
+        import os
+        test_file = os.path.join(os.path.dirname(self.data_root), "web-resources", "test.html")
+        if not os.path.exists(test_file):
+            test_file = os.path.join(self.data_root, "web-resources", "test.html")
+        
+        if os.path.exists(test_file):
+            with open(test_file, "r", encoding="utf-8") as f:
+                return web.Response(text=f.read(), content_type="text/html")
+        return web.Response(status=404, text=f"Тестовая страница не найдена. Пробовали: {test_file}")
+    
+    async def docs_page(self, request):
+        """Страница документации"""
+        import os
+        
+        
+        # if self.client_data and not self._check_session(request):
+        #     return web.Response(
+        #         status=302,
+        #         headers={'Location': '/'}
+        #     )
+        
+        possible_paths = [
+            os.path.join(self.data_root, "web-resources", "pages", "docs.html"),
+            os.path.join(os.path.dirname(self.data_root), "web-resources", "pages", "docs.html"),
+        ]
+        
+        for docs_file in possible_paths:
+            if os.path.exists(docs_file):
+                with open(docs_file, "r", encoding="utf-8") as f:
+                    return web.Response(text=f.read(), content_type="text/html")
+        
+        return web.Response(status=404, text=f"Документация не найдена. Пробовали: {possible_paths}")
+    
+    async def dashboard_page(self, request):
+        """Панель управления"""
+        import os
+        
+        logger.info(f"Dashboard access attempt, client_data exists: {bool(self.client_data)}")
+        
+        # ВРЕМЕННО: отключаем проверку сессии для отладки
+        # if self.client_data and not self._check_session(request):
+        #     logger.warning("Dashboard access denied - no valid session")
+        #     return web.Response(
+        #         status=302,
+        #         headers={'Location': '/'}
+        #     )
+        
+        logger.info("Dashboard access granted")
+        
+        possible_paths = [
+            os.path.join(self.data_root, "web-resources", "pages", "dashboard.html"),
+            os.path.join(os.path.dirname(self.data_root), "web-resources", "pages", "dashboard.html"),
+        ]
+        
+        for dashboard_file in possible_paths:
+            if os.path.exists(dashboard_file):
+                with open(dashboard_file, "r", encoding="utf-8") as f:
+                    return web.Response(text=f.read(), content_type="text/html")
+        
+        return web.Response(status=404, text=f"Панель управления не найдена. Пробовали: {possible_paths}")
+    
+    async def modules_page(self, request):
+        """Страница модулей"""
+        import os
+        
+        # ВРЕМЕННО: отключаем проверку сессии
+        # if self.client_data and not self._check_session(request):
+        #     return web.Response(
+        #         status=302,
+        #         headers={'Location': '/'}
+        #     )
+        
+        possible_paths = [
+            os.path.join(self.data_root, "web-resources", "pages", "modules.html"),
+            os.path.join(os.path.dirname(self.data_root), "web-resources", "pages", "modules.html"),
+        ]
+        
+        for modules_file in possible_paths:
+            if os.path.exists(modules_file):
+                with open(modules_file, "r", encoding="utf-8") as f:
+                    return web.Response(text=f.read(), content_type="text/html")
+        
+        return web.Response(status=404, text=f"Модули не найдены. Пробовали: {possible_paths}")
 
     async def check_session(self, request: web.Request) -> web.Response:
         return web.Response(body=("1" if self._check_session(request) else "0"))
@@ -128,9 +224,15 @@ class Web:
         return self.clients_set.wait()
 
     def _check_session(self, request: web.Request) -> bool:
+        session_cookie = request.cookies.get("session", None)
+        has_clients = bool(main.nexus.clients)
+        is_valid = session_cookie in self._sessions
+        
+        logger.debug(f"Session check: cookie={session_cookie}, has_clients={has_clients}, valid={is_valid}, sessions={self._sessions}")
+        
         return (
-            request.cookies.get("session", None) in self._sessions
-            if main.nexus.clients
+            is_valid
+            if has_clients
             else True
         )
 
@@ -196,10 +298,13 @@ class Web:
         return web.Response(body="OK")
 
     async def set_tg_api(self, request: web.Request) -> web.Response:
-        if not self._check_session(request):
+        # При первом запуске разрешаем без проверки сессии
+        if self.client_data and not self._check_session(request):
             return web.Response(status=401, body="Authorization required")
 
         text = await request.text()
+        
+        logger.info(f"Received API credentials, length: {len(text)}")
 
         if len(text) < 36:
             return web.Response(
@@ -207,8 +312,8 @@ class Web:
                 body="API ID and HASH pair has invalid length",
             )
 
-        api_id = text[32:]
         api_hash = text[:32]
+        api_id = text[32:]
 
         if any(c not in string.hexdigits for c in api_hash) or any(
             c not in string.digits for c in api_id
@@ -227,6 +332,7 @@ class Web:
         )
 
         self.api_set.set()
+        logger.info("API credentials saved successfully")
         return web.Response(body="ok")
 
     async def _qr_login_poll(self):
@@ -270,8 +376,18 @@ class Web:
         client = self._get_client()
         self._pending_client = client
 
-        await client.connect()
-        self._qr_login = await client.qr_login()
+        # Try connecting and creating QR login with a few retries on network errors
+        for attempt in range(1, 4):
+            try:
+                await client.connect()
+                self._qr_login = await client.qr_login()
+                break
+            except (ConnectionResetError, OSError, asyncio.TimeoutError) as e:
+                logger.warning("QR init network error (attempt %s): %s", attempt, e)
+                if attempt >= 3:
+                    logger.exception("Failed to initialize QR login after retries")
+                    return web.Response(status=502, body="Network error initializing QR login")
+                await asyncio.sleep(1 * attempt)
         self._qr_task = asyncio.ensure_future(self._qr_login_poll())
 
         return web.Response(body=self._qr_login.url)
@@ -321,7 +437,8 @@ class Web:
         return web.Response(status=200, body="Yes")
 
     async def send_tg_code(self, request: web.Request) -> web.Response:
-        if not self._check_session(request):
+        # При первом запуске разрешаем без проверки сессии
+        if self.client_data and not self._check_session(request):
             return web.Response(status=401, body="Authorization required")
 
         if self.client_data and "LAVHOST" in os.environ:
@@ -331,6 +448,8 @@ class Web:
             return web.Response(status=208, body="Already pending")
 
         text = await request.text()
+        logger.info(f"Received phone number: {text}")
+        
         phone = parse_phone(text)
 
         if not phone:
@@ -340,11 +459,24 @@ class Web:
 
         self._pending_client = client
 
-        await client.connect()
-        try:
-            await client.send_code_request(phone)
-        except FloodWaitError as e:
-            return web.Response(status=429, body=self._render_fw_error(e))
+        # Try connecting and sending code with retries on transient network errors
+        for attempt in range(1, 4):
+            try:
+                await client.connect()
+                await client.send_code_request(phone)
+                logger.info(f"Code sent successfully to {phone}")
+                break
+            except FloodWaitError as e:
+                return web.Response(status=429, body=self._render_fw_error(e))
+            except (ConnectionResetError, OSError, asyncio.TimeoutError) as e:
+                logger.warning("Network error while sending code (attempt %s): %s", attempt, e)
+                if attempt >= 3:
+                    logger.exception("Failed to send code after retries")
+                    return web.Response(status=502, body="Network error sending code")
+                await asyncio.sleep(1 * attempt)
+            except Exception as e:
+                logger.exception(f"Unexpected error sending code: {e}")
+                return web.Response(status=500, body=f"Error: {str(e)}")
 
         return web.Response(body="ok")
 
@@ -401,39 +533,50 @@ class Web:
 
         logger.debug("2FA code accepted, logging in")
 
+        # Создаем сессию после успешной авторизации
+        session = f"nexus_{utils.rand(16)}"
+        self._sessions += [session]
+        save_session_to_db(self, session)
+        
+        response = web.Response(status=200, body="SUCCESS")
+        response.set_cookie('session', session, max_age=31536000, httponly=True)
+        
         asyncio.ensure_future(self.schedule_restart(self))
-        # self.schedule_restart()
-        return web.Response(status=200, body="SUCCESS")
+        return response
 
     async def tg_code(self, request: web.Request) -> web.Response:
-        if not self._check_session(request):
+        # При первом запуске разрешаем без проверки сессии
+        if self.client_data and not self._check_session(request):
             return web.Response(status=401)
 
         text = await request.text()
+        logger.info(f"Received code verification request")
 
         if len(text) < 6:
-            return web.Response(status=400)
+            return web.Response(status=400, body="Code too short")
 
         split = text.split("\n", 2)
 
-        if len(split) not in (2, 3):
-            return web.Response(status=400)
+        if len(split) < 2:
+            return web.Response(status=400, body="Invalid format")
 
-        code = split[0]
-        phone = parse_phone(split[1])
-        password = split[2]
+        code = split[0].strip()
+        phone = parse_phone(split[1].strip())
+        password = split[2].strip() if len(split) == 3 else ""
 
-        if (
-            (len(code) != 5 and not password)
-            or any(c not in string.digits for c in code)
-            or not phone
-        ):
-            return web.Response(status=400)
+        if not code or not phone:
+            return web.Response(status=400, body="Invalid code or phone")
+        
+        if code and any(c not in string.digits for c in code):
+            return web.Response(status=400, body="Code must contain only digits")
 
+        # Если пароль не указан - пробуем войти только с кодом
         if not password:
             try:
                 await self._pending_client.sign_in(phone, code=code)
+                logger.info("Sign in successful")
             except SessionPasswordNeededError:
+                logger.info("2FA required")
                 return web.Response(
                     status=401,
                     body="2FA Password required",
@@ -447,23 +590,49 @@ class Web:
                     status=421,
                     body=(self._render_fw_error(e)),
                 )
+            except Exception as e:
+                logger.exception(f"Error during sign in: {e}")
+                return web.Response(status=500, body=f"Error: {str(e)}")
         else:
+            # Если пароль указан - сначала входим с кодом, потом с паролем
             try:
-                await self._pending_client.sign_in(phone, password=password)
+                # Сначала пробуем войти с кодом
+                try:
+                    await self._pending_client.sign_in(phone, code=code)
+                    logger.info("Sign in successful without 2FA")
+                except SessionPasswordNeededError:
+                    # Теперь вводим пароль 2FA
+                    logger.info("Entering 2FA password")
+                    await self._pending_client.sign_in(password=password)
+                    logger.info("Sign in with 2FA successful")
             except PasswordHashInvalidError:
                 return web.Response(
                     status=403,
                     body="Invalid 2FA password",
                 )
+            except PhoneCodeExpiredError:
+                return web.Response(status=404, body="Code expired")
+            except PhoneCodeInvalidError:
+                return web.Response(status=403, body="Invalid code")
             except FloodWaitError as e:
                 return web.Response(
                     status=421,
                     body=(self._render_fw_error(e)),
                 )
+            except Exception as e:
+                logger.exception(f"Error during sign in with 2FA: {e}")
+                return web.Response(status=500, body=f"Error: {str(e)}")
 
+        # Создаем сессию после успешной авторизации
+        session = f"nexus_{utils.rand(16)}"
+        self._sessions += [session]
+        save_session_to_db(self, session)
+        
+        response = web.Response(status=200, body="SUCCESS")
+        response.set_cookie('session', session, max_age=31536000, httponly=True)
+        
         asyncio.ensure_future(self.schedule_restart(self))
-        # self.schedule_restart()
-        return web.Response(status=200, body="SUCCESS")
+        return response
 
     async def finish_login(self, request: web.Request) -> web.Response:
         if not self._check_session(request):
@@ -551,7 +720,7 @@ class Web:
                 msg = await bot.send_message(
                     chat_id=user[1].tg_id,
                     text=(
-                        "🪐🔐 <b>Click button below to confirm web application"
+                        "🌐🔐 <b>Click button below to confirm web application"
                         f" ops</b>\n\n<b>Client IP</b>: {ips}\n{cities}\n<i>If you did"
                         " not request any codes, simply ignore this message</i>"
                     ),
@@ -587,3 +756,89 @@ class Web:
         self._sessions += [session]
 
         return web.Response(body=session)
+
+    async def api_auth_check(self, request: web.Request) -> web.Response:
+        """Проверить, настроена ли авторизация"""
+        if not self.client_data:
+            return web.json_response({"setup_required": False})
+        
+        client_id = list(self.client_data.keys())[0]
+        loader, client, db = self.client_data[client_id]
+        
+        web_auth = db.get(__name__, "web_auth", {})
+        return web.json_response({
+            "setup_required": not bool(web_auth.get("username"))
+        })
+    
+    async def api_auth_setup(self, request: web.Request) -> web.Response:
+        """Установить логин и пароль для веб-панели"""
+        import hashlib
+        
+        if not self.client_data:
+            return web.json_response({"success": False, "error": "No clients"})
+        
+        data = await request.json()
+        username = data.get("username", "").strip()
+        password = data.get("password", "")
+        
+        if len(username) < 3 or len(password) < 6:
+            return web.json_response({
+                "success": False,
+                "error": "Логин минимум 3 символа, пароль минимум 6"
+            })
+        
+        client_id = list(self.client_data.keys())[0]
+        loader, client, db = self.client_data[client_id]
+        
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        
+        db.set(__name__, "web_auth", {
+            "username": username,
+            "password_hash": password_hash
+        })
+        
+        session = f"nexus_{utils.rand(16)}"
+        self._sessions += [session]
+        
+        return web.json_response({
+            "success": True,
+            "session": session
+        })
+    
+    async def api_auth_login(self, request: web.Request) -> web.Response:
+        """Войти в веб-панель"""
+        import hashlib
+        
+        if not self.client_data:
+            return web.json_response({"success": False, "error": "No clients"})
+        
+        data = await request.json()
+        username = data.get("username", "").strip()
+        password = data.get("password", "")
+        
+        client_id = list(self.client_data.keys())[0]
+        loader, client, db = self.client_data[client_id]
+        
+        web_auth = db.get(__name__, "web_auth", {})
+        
+        if not web_auth.get("username"):
+            return web.json_response({
+                "success": False,
+                "error": "Авторизация не настроена"
+            })
+        
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        
+        if (username == web_auth.get("username") and 
+            password_hash == web_auth.get("password_hash")):
+            session = f"nexus_{utils.rand(16)}"
+            self._sessions += [session]
+            return web.json_response({
+                "success": True,
+                "session": session
+            })
+        
+        return web.json_response({
+            "success": False,
+            "error": "Неверный логин или пароль"
+        })

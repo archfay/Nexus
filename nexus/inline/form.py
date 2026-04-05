@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -33,12 +33,16 @@ from aiogram.types import (
     InlineQueryResultVideo,
     InputTextMessageContent,
 )
-from herokutl.errors.rpcerrorlist import ChatSendInlineForbiddenError
+from herokutl.errors.rpcerrorlist import (
+    ChatSendInlineForbiddenError,
+    InputUserDeactivatedError,
+    YouBlockedUserError,
+)
 from herokutl.extensions.html import CUSTOM_EMOJIS
 from herokutl.tl.types import Message
 
 from .. import main, utils
-from ..types import NexusReplyMarkup
+from ..types import nexusReplyMarkup
 from .types import InlineMessage, InlineUnit
 
 logger = logging.getLogger(__name__)
@@ -53,7 +57,7 @@ VERIFICATION_EMOJIES = list(
         "🦀🐡🐠🐟🐅🐊🦭🦈🐋🐳🐬🐆🦓🦍🦧🦣🐘🦛🐃🦬🦘🦒🐫🐪🦏"
         "🐂🐄🐎🐖🐏🐑🦙🐈🐕‍🦺🦮🐩🐕🦌🐐🐈‍⬛🪶🐓🦃🦤🦚🦜🦡🦨🦝🐇"
         "🕊🦩🦢🦫🦦🦥🐁🐀🐿🦔🌳🌲🌵🐲🐉🐾🎋🍂🍁🍄🐚🌾🪨💐🌷"
-        "🥀🌺🌸🌻🌞🌜🌘🌗🌎🪐💫⭐️✨⚡️☄️💥☀️🌪🔥🌈🌤⛅️❄️⛄️🌊"
+        "🥀🌺🌸🌻🌞🌜🌘🌗🌎🌐💫⭐️✨⚡️☄️💥☀️🌪🔥🌈🌤⛅️❄️⛄️🌊"
         "☂️🍏🍎🍐🍊🍋🍌🍉🥭🍑🍒🍈🫐🍓🍇🍍🥥🥝🍅🥑🥦🧔‍♂️"
     )
 )
@@ -68,7 +72,7 @@ class Form(InlineUnit):
         self,
         text: str,
         message: typing.Union[Message, int],
-        reply_markup: typing.Optional[NexusReplyMarkup] = None,
+        reply_markup: typing.Optional[nexusReplyMarkup] = None,
         *,
         force_me: bool = False,
         always_allow: typing.Optional[typing.List[int]] = None,
@@ -276,12 +280,9 @@ class Form(InlineUnit):
                 status_message = await (
                     message.edit if message.out else message.respond
                 )(
-                    (
-                        utils.get_platform_emoji()
-                        if self._client.nexus_me.premium and CUSTOM_EMOJIS
-                        else "🪐"
-                    )
-                    + self.translator.getkey("inline.opening_form"),
+                    utils.add_premium_emoji(
+                        self.translator.getkey("inline.opening_form")
+                    ),
                     **({"reply_to": utils.get_topic(message)} if message.out else {}),
                 )
             except Exception:
@@ -352,7 +353,41 @@ class Form(InlineUnit):
             m = await self._invoke_unit(unit_id, message)
         except ChatSendInlineForbiddenError:
             await answer(self.translator.getkey("inline.inline403"))
-        except Exception:
+        except Exception as e:
+            # Handle specific inline errors gracefully
+            if isinstance(e, InputUserDeactivatedError):
+                try:
+                    self._db.set("nexus.inline", "bot_token", None)
+                except Exception:
+                    logger.exception("Failed to clear inline token in DB")
+
+                await answer(
+                    self.translator.getkey("inline.bot_deleted")
+                    if self.translator
+                    else "Inline-бот недоступен или удалён"
+                )
+                del self._units[unit_id]
+                return False
+
+            if isinstance(e, YouBlockedUserError):
+                await answer(
+                    self.translator.getkey("inline.blocked")
+                    if self.translator
+                    else "Вы заблокировали inline-бота"
+                )
+                del self._units[unit_id]
+                return False
+
+            # Handle empty inline results gracefully
+            if "No query results" in str(e):
+                await answer(
+                    self.translator.getkey("inline.no_query_results")
+                    if self.translator
+                    else "Ничего не найдено для inline-запроса"
+                )
+                del self._units[unit_id]
+                return False
+
             logger.exception("Can't send form")
 
             del self._units[unit_id]

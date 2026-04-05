@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -49,19 +49,19 @@ class UpdaterMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "GIT_ORIGIN_URL",
-                "https://github.com/DoNotWeb/Nexus",
-                lambda: self.strings("origin_cfg_doc"),
+                "https://github.com/archfay/Nexus",
+                "Git repository URL for updates",
                 validator=loader.validators.Link(),
             ),
             loader.ConfigValue(
                 "disable_notifications",
-                doc=lambda: self.strings("_cfg_doc_disable_notifications"),
+                doc="Disable update notifications",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
                 "autoupdate",
                 False,
-                doc=lambda: self.strings("_cfg_doc_autoupdate"),
+                doc="Enable automatic updates",
                 validator=loader.validators.Boolean(),
             ),
         )
@@ -70,6 +70,11 @@ class UpdaterMod(loader.Module):
         self.set("autoupdate", True)
         if not state:
             self.config["autoupdate"] = False
+            config_data = self._db.get(self.__class__.__name__, "__config__", {})
+            config_data["autoupdate"] = False
+            self._db.set(self.__class__.__name__, "__config__", config_data)
+            self._db.save()
+            
             await self.inline.bot(
                 call.answer(
                     self.strings("autoupdate_off").format(prefix=self.get_prefix()),
@@ -80,6 +85,10 @@ class UpdaterMod(loader.Module):
             return
 
         self.config["autoupdate"] = True
+        config_data = self._db.get(self.__class__.__name__, "__config__", {})
+        config_data["autoupdate"] = True
+        self._db.set(self.__class__.__name__, "__config__", config_data)
+        self._db.save()
 
         await self.inline.bot(
             call.answer(self.strings("autoupdate_on"), show_alert=True)
@@ -165,7 +174,7 @@ class UpdaterMod(loader.Module):
                     self.tg_id,
                     text=self.strings("update_required").format(
                         utils.get_git_hash()[:6],
-                        '<a href="https://github.com/DoNotWeb/Nexus/compare/{}...{}">{}</a>'.format(
+                        '<a href="https://github.com/archfay/Nexus/compare/{}...{}">{}</a>'.format(
                             utils.get_git_hash()[:12],
                             self.get_latest()[:12],
                             self.get_latest()[:6],
@@ -188,7 +197,7 @@ class UpdaterMod(loader.Module):
                     text=self.strings("autoupdate_notifier").format(
                         self.get_latest()[:6],
                         self.get_changelog(),
-                        '<a href="https://github.com/DoNotWeb/Nexus/compare/{}...{}">{}</a>'.format(
+                        '<a href="https://github.com/archfay/Nexus/compare/{}...{}">{}</a>'.format(
                             utils.get_git_hash()[:12],
                             self.get_latest()[:12],
                             "🔎 diff",
@@ -225,16 +234,9 @@ class UpdaterMod(loader.Module):
 
     @loader.command()
     async def changelog(self, message: Message):
-        """Shows the changelog of the last major update"""
-        with open("CHANGELOG.md", mode="r", encoding="utf-8") as f:
-            changelog = f.read().split("##")[1].strip()
-        if (await self._client.get_me()).premium:
-            changelog.replace(
-                "🌑 Nexus",
-                "<emoji document_id=5192765204898783881>🌘</emoji><emoji document_id=5195311729663286630>🌘</emoji><emoji document_id=5195045669324201904>🌘</emoji>",
-            )
-
-        await utils.answer(message, self.strings("changelog").format(changelog))
+        """Shows the changelog"""
+        changelog_text = self._db.get("AdminBroadcast", "changelog", "📋 <b>Nexus 1.1.0</b>\n\nНет информации о версии.")
+        await utils.answer(message, changelog_text)
 
     @loader.command()
     async def restart(self, message: Message):
@@ -295,14 +297,22 @@ class UpdaterMod(loader.Module):
         if secure_boot:
             self._db.set(loader.__name__, "secure_boot", True)
 
+        restarter = self.lookup("Restarter")
+        restart_msg = (
+            restarter.config["restart_message"] if restarter 
+            else self.strings("restarting_caption")
+        )
+
         msg_obj = await utils.answer(
             msg_obj,
-            self.strings("restarting_caption").format(
-                utils.get_platform_emoji()
-                if self._client.nexus_me.premium
-                and CUSTOM_EMOJIS
-                and isinstance(msg_obj, Message)
-                else "Nexus"
+            restart_msg.format(
+                platform=(
+                    utils.get_platform_emoji()
+                    if self._client.nexus_me.premium
+                    and CUSTOM_EMOJIS
+                    and isinstance(msg_obj, Message)
+                    else "Nexus"
+                )
             ),
         )
 
@@ -412,6 +422,11 @@ class UpdaterMod(loader.Module):
     async def autoupdate(self, message: Message):
         """| switch autoupdate state"""
         self.config["autoupdate"] = not self.config["autoupdate"]
+        config_data = self._db.get(self.__class__.__name__, "__config__", {})
+        config_data["autoupdate"] = self.config["autoupdate"]
+        self._db.set(self.__class__.__name__, "__config__", config_data)
+        self._db.save()
+        
         if self.config["autoupdate"]:
             await utils.answer(message, self.strings["autoupdate_on"])
         else:
@@ -476,8 +491,19 @@ class UpdaterMod(loader.Module):
     async def client_ready(self):
         try:
             git.Repo()
+        except git.exc.InvalidGitRepositoryError:
+            logger.warning("Not a git repository, initializing...")
+            try:
+                repo = Repo.init(os.path.dirname(utils.get_base_dir()))
+                origin = repo.create_remote("origin", self.config["GIT_ORIGIN_URL"])
+                origin.fetch()
+                repo.create_head(version.branch, getattr(origin.refs, version.branch, origin.refs.master))
+                getattr(repo.heads, version.branch).set_tracking_branch(getattr(origin.refs, version.branch, origin.refs.master))
+                getattr(repo.heads, version.branch).checkout(True)
+            except Exception as e:
+                logger.error(f"Failed to initialize git repository: {e}")
         except Exception as e:
-            raise loader.LoadError("Can't load due to repo init error") from e
+            logger.error(f"Git repository error: {e}")
 
         self._markup = lambda: self.inline.generate_markup(
             [
@@ -621,19 +647,29 @@ class UpdaterMod(loader.Module):
         except Exception:
             took = "n/a"
 
-        msg = self.strings("success").format(utils.ascii_face(), took)
+        restarter = self.lookup("Restarter")
+        complete_msg = (
+            restarter.config["restart_complete_message"] if restarter
+            else self.strings("success")
+        )
+
+        msg = complete_msg.format(
+            time=took,
+            face=utils.ascii_face()
+        )
         ms = self.get("selfupdatemsg")
 
         if ":" in str(ms):
             chat_id, message_id = ms.split(":")
             chat_id, message_id = int(chat_id), int(message_id)
-            await self._client.edit_message(chat_id, message_id, msg)
+            await utils.safe_edit_message(self._client, chat_id, message_id, msg)
             return
 
-        await self.inline.bot.edit_message_text(
-            inline_message_id=ms,
-            text=self.inline.sanitise_text(msg),
-        )
+        with contextlib.suppress(Exception):
+            await self.inline.bot.edit_message_text(
+                inline_message_id=ms,
+                text=self.inline.sanitise_text(msg),
+            )
 
     async def full_restart_complete(self, secure_boot: bool = False):
         start = self.get("restart_ts")
@@ -646,9 +682,17 @@ class UpdaterMod(loader.Module):
         self.set("restart_ts", None)
 
         ms = self.get("selfupdatemsg")
-        msg = self.strings(
-            "secure_boot_complete" if secure_boot else "full_success"
-        ).format(utils.ascii_face(), took)
+        
+        restarter = self.lookup("Restarter")
+        complete_msg = (
+            restarter.config["restart_complete_message"] if restarter
+            else self.strings("secure_boot_complete" if secure_boot else "full_success")
+        )
+        
+        msg = complete_msg.format(
+            time=took,
+            face=utils.ascii_face()
+        )
 
         if ms is None:
             return
@@ -658,15 +702,17 @@ class UpdaterMod(loader.Module):
         if ":" in str(ms):
             chat_id, message_id = ms.split(":")
             chat_id, message_id = int(chat_id), int(message_id)
-            await self._client.edit_message(chat_id, message_id, msg)
+            await utils.safe_edit_message(self._client, chat_id, message_id, msg)
             await asyncio.sleep(60)
-            await self._client.delete_messages(chat_id, message_id)
+            with contextlib.suppress(Exception):
+                await self._client.delete_messages(chat_id, message_id)
             return
 
-        await self.inline.bot.edit_message_text(
-            inline_message_id=ms,
-            text=self.inline.sanitise_text(msg),
-        )
+        with contextlib.suppress(Exception):
+            await self.inline.bot.edit_message_text(
+                inline_message_id=ms,
+                text=self.inline.sanitise_text(msg),
+            )
 
     @loader.command()
     async def rollback(self, message: Message):

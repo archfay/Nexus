@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -53,7 +53,7 @@ def restart():
 
     if "NEXUS_DO_NOT_RESTART2" in os.environ:
         print(
-            "NexusTL version 1.0.2 or higher is required, use `pip install heroku-tl-new -U` for update."
+            "nexusTL version 1.0.2 or higher is required, use `pip install heroku-tl-new -U` for update."
         )
         sys.exit(0)
 

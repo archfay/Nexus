@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модули - Nexus Userbot</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" href="https://github.com/hikariatama/assets/raw/master/cherry-blossom_1f338.png">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp" alt="Nexus" class="logo">
+                <span class="brand-name">Nexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="docs.html">Документация</a>
+                <a href="modules.html" class="active">Модули</a>
+                <a href="dashboard.html">Панель</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="/" class="sidebar-item">
+                <span class="sidebar-icon">🏠</span>
+                <span>Главная</span>
+            </a>
+            <a href="docs.html" class="sidebar-item">
+                <span class="sidebar-icon">📖</span>
+                <span>Документация</span>
+            </a>
+            <a href="dashboard.html" class="sidebar-item">
+                <span class="sidebar-icon">🎛️</span>
+                <span>Панель управления</span>
+            </a>
+            <a href="modules.html" class="sidebar-item">
+                <span class="sidebar-icon">📦</span>
+                <span>Модули</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💻</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>Telegram</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top: 100px; padding-bottom: 60px;">
+        <h1 style="text-align: center; margin-bottom: 20px;">📦 Модули Nexus</h1>
+        <p style="text-align: center; color: #888; margin-bottom: 60px;">Расширьте функциональность вашего юзербота</p>
+
+        <div class="modules-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+            
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">⚙️</span>
+                    <h3>Settings</h3>
+                </div>
+                <p class="module-description">Управление настройками Nexus</p>
+                <div class="module-commands">
+                    <code>.settings</code>
+                    <code>.setprefix</code>
+                    <code>.config</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">📦</span>
+                    <h3>Loader</h3>
+                </div>
+                <p class="module-description">Загрузка и управление модулями</p>
+                <div class="module-commands">
+                    <code>.loadmod</code>
+                    <code>.unloadmod</code>
+                    <code>.dlmod</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">💻</span>
+                    <h3>Terminal</h3>
+                </div>
+                <p class="module-description">Выполнение системных команд</p>
+                <div class="module-commands">
+                    <code>.terminal</code>
+                    <code>.term</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🐍</span>
+                    <h3>Eval</h3>
+                </div>
+                <p class="module-description">Выполнение Python кода</p>
+                <div class="module-commands">
+                    <code>.eval</code>
+                    <code>.e</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🔄</span>
+                    <h3>Updater</h3>
+                </div>
+                <p class="module-description">Обновление Nexus</p>
+                <div class="module-commands">
+                    <code>.update</code>
+                    <code>.restart</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">💾</span>
+                    <h3>Backup</h3>
+                </div>
+                <p class="module-description">Резервное копирование БД</p>
+                <div class="module-commands">
+                    <code>.backup</code>
+                    <code>.restore</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🔒</span>
+                    <h3>Security</h3>
+                </div>
+                <p class="module-description">Защита и безопасность</p>
+                <div class="module-commands">
+                    <code>.api_fw_protection</code>
+                    <code>.security</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">❓</span>
+                    <h3>Help</h3>
+                </div>
+                <p class="module-description">Справка по командам</p>
+                <div class="module-commands">
+                    <code>.help</code>
+                    <code>.modules</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🌐</span>
+                    <h3>Web</h3>
+                </div>
+                <p class="module-description">Веб-интерфейс</p>
+                <div class="module-commands">
+                    <code>.panel</code>
+                    <code>.web</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🖱️</span>
+                    <h3>Inline</h3>
+                </div>
+                <p class="module-description">Inline элементы</p>
+                <div class="module-commands">
+                    <code>.form</code>
+                    <code>.gallery</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">ℹ️</span>
+                    <h3>Info</h3>
+                </div>
+                <p class="module-description">Информация о системе</p>
+                <div class="module-commands">
+                    <code>.info</code>
+                    <code>.ping</code>
+                    <code>.uptime</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <span class="module-icon">🌍</span>
+                    <h3>Translations</h3>
+                </div>
+                <p class="module-description">Мультиязычность</p>
+                <div class="module-commands">
+                    <code>.setlang</code>
+                </div>
+                <span class="module-badge core">Core</span>
+            </div>
+
+        </div>
+
+        <div style="margin-top: 80px; text-align: center;">
+            <h2 style="margin-bottom: 30px;">🔍 Где найти больше модулей?</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto;">
+                <a href="https://github.com/topics/nexus-modules" target="_blank" class="resource-card">
+                    <span style="font-size: 48px;">💻</span>
+                    <h3>GitHub</h3>
+                    <p>Официальные модули</p>
+                </a>
+                <a href="https://t.me/Nexus_Talking" target="_blank" class="resource-card">
+                    <span style="font-size: 48px;">💬</span>
+                    <h3>Telegram</h3>
+                    <p>Сообщество</p>
+                </a>
+                <a href="docs.html#creating-modules" class="resource-card">
+                    <span style="font-size: 48px;">📖</span>
+                    <h3>Документация</h3>
+                    <p>Создать свой модуль</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Nexus</h3>
+                    <p>Продвинутый Telegram userbot</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Ссылки</h3>
+                    <a href="docs.html">Документация</a>
+                    <a href="modules.html">Модули</a>
+                    <a href="https://github.com/archfay/Nexus" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Сообщество</h3>
+                    <a href="https://t.me/Nexus_Talking" target="_blank">Telegram</a>
+                    <a href="https://github.com/archfay/Nexus/issues" target="_blank">Issues</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Nexus Userbot. Сделано с ❤️ сообществом</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebarMenu').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebarMenu').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+    </script>
+
+    <style>
+        .modules-grid {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .module-card {
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #ff3366);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .module-icon {
+            font-size: 32px;
+        }
+
+        .module-header h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .module-description {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .module-commands {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .module-commands code {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .module-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .module-badge.core {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .resource-card {
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .resource-card h3 {
+            color: #fff;
+            margin: 15px 0 10px;
+        }
+
+        .resource-card p {
+            color: #888;
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</body>
+</html>

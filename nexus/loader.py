@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -144,13 +144,15 @@ native_import = builtins.__import__
 
 def patched_import(name: str, *args, **kwargs):
     if name.startswith("telethon"):
-        return native_import("nexus" + name[8:], *args, **kwargs)
+        return native_import("herokutl" + name[8:], *args, **kwargs)
     elif name.startswith("hikkatl"):
-        return native_import("nexus" + name[7:], *args, **kwargs)
+        return native_import("herokutl" + name[7:], *args, **kwargs)
     elif name.startswith("hikkalls"):
         return native_import(name, *args, **kwargs)
     elif name.startswith("hikka"):
-        return native_import("nexus" + name[5:], *args, **kwargs)
+        return native_import("herokutl" + name[5:], *args, **kwargs)
+    elif name == "herokutl.tl" or name.startswith("herokutl.tl."):
+        return native_import("herokutl" + name[8:], *args, **kwargs)
 
     return native_import(name, *args, **kwargs)
 
@@ -966,6 +968,10 @@ class Modules:
             _nexus_client_id_logging_tag = copy.copy(self.client.tg_id)  # noqa: F841
 
         if hasattr(mod, "config"):
+            # Передаем ссылки на модуль и базу данных для автосохранения
+            mod.config._module_name = mod.__class__.__name__
+            mod.config._db = self._db
+            
             modcfg = self._db.get(
                 mod.__class__.__name__,
                 "__config__",

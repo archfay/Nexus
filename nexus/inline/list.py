@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -32,7 +32,7 @@ from herokutl.extensions.html import CUSTOM_EMOJIS
 from herokutl.tl.types import Message
 
 from .. import main, utils
-from ..types import NexusReplyMarkup
+from ..types import nexusReplyMarkup
 from .types import InlineMessage, InlineUnit
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class List(InlineUnit):
         ttl: typing.Union[int, bool] = False,
         on_unload: typing.Optional[typing.Callable[[], typing.Any]] = None,
         silent: bool = False,
-        custom_buttons: typing.Optional[NexusReplyMarkup] = None,
+        custom_buttons: typing.Optional[nexusReplyMarkup] = None,
     ) -> typing.Union[bool, InlineMessage]:
         """
         Send inline list to chat
@@ -191,12 +191,9 @@ class List(InlineUnit):
                 status_message = await (
                     message.edit if message.out else message.respond
                 )(
-                    (
-                        utils.get_platform_emoji()
-                        if self._client.nexus_me.premium and CUSTOM_EMOJIS
-                        else "🪐"
-                    )
-                    + self.translator.getkey("inline.opening_list"),
+                    utils.add_premium_emoji(
+                        self.translator.getkey("inline.opening_list")
+                    ),
                     **({"reply_to": utils.get_topic(message)} if message.out else {}),
                 )
             except Exception:

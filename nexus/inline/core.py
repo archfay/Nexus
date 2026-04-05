@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -22,6 +22,9 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.exceptions import TelegramConflictError, TelegramUnauthorizedError
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
+import aiohttp
+import os
 from herokutl.errors.rpcerrorlist import InputUserDeactivatedError, YouBlockedUserError
 from herokutl.tl.functions.contacts import UnblockRequest
 from herokutl.tl.types import Message
@@ -58,7 +61,7 @@ class InlineManager(
     :param client: Telegram client
     :param db: Database instance
     :param allmodules: All modules
-    :type client: nexus.tl_cache.CustomTelegramClient
+    :type client: herokutl.tl_cache.CustomTelegramClient
     :type db: nexus.database.Database
     :type allmodules: nexus.loader.Modules
     """
@@ -130,8 +133,16 @@ class InlineManager(
         self.init_complete = True
 
         try:
+            proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
+            session = None
+            if proxy:
+                logger.info(f"Using proxy for inline bot: {proxy}")
+                session = AiohttpSession(proxy=proxy)
+            
             self.bot = Bot(
-                token=self._token, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+                token=self._token,
+                default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+                session=session
             )
         except Exception:
             logger.critical("Failed to create Bot instance", exc_info=True)
@@ -139,7 +150,8 @@ class InlineManager(
             return False
 
         self._bot = self.bot
-        # pass bot instance to dispatcher to ensure proper binding
+        self.bot_instance = self.bot  # Alias for backward compatibility
+        # Create dispatcher without bot parameter (aiogram 3.x)
         self._dp = Dispatcher()
 
         try:
@@ -249,8 +261,31 @@ class InlineManager(
 
         async def result_getter():
             nonlocal unit_id, q
-            with contextlib.suppress(Exception):
+            try:
                 q = await self._client.inline_query(self.bot_username, unit_id)
+                logger.debug("Inline query result for %s: %s", unit_id, repr(q))
+            except Exception as err:
+                logger.exception("Inline query failed for %s", unit_id)
+                # If bot was deleted, clear stored token so manager can recover
+                try:
+                    if isinstance(err, InputUserDeactivatedError):
+                        logger.warning(
+                            "Inline bot appears deleted — clearing stored token"
+                        )
+                        try:
+                            self._db.set("nexus.inline", "bot_token", None)
+                        except Exception:
+                            logger.exception("Failed to clear inline token in DB")
+                        self._token = False
+                except Exception:
+                    logger.exception("Error while handling inline query exception type")
+
+                # store exception for the event poller and wake it
+                try:
+                    self._error_events[unit_id] = err
+                    event.set()
+                except Exception:
+                    logger.exception("Failed to set error event for %s", unit_id)
 
         async def event_poller():
             nonlocal exception
@@ -275,11 +310,17 @@ class InlineManager(
             raise exception  # skipcq: PYL-E0702
 
         if not q:
+            # q can be None or an empty list — treat both as 'no results'
+            logger.debug("No inline query results for unit %s (q=%r)", unit_id, q)
             raise Exception("No query results")
 
-        return await q[0].click(
-            utils.get_chat_id(message) if isinstance(message, Message) else message,
-            reply_to=(
-                message.reply_to_msg_id if isinstance(message, Message) else None
-            ),
-        )
+        try:
+            return await q[0].click(
+                utils.get_chat_id(message) if isinstance(message, Message) else message,
+                reply_to=(
+                    message.reply_to_msg_id if isinstance(message, Message) else None
+                ),
+            )
+        except Exception:
+            logger.exception("Failed to click inline result for %s", unit_id)
+            raise

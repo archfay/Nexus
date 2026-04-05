@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -769,6 +769,75 @@ class NexusSettingsMod(loader.Module):
             for name in dir(self.lookup(module))
             if getattr(getattr(self.lookup(module), name), "is_debug_method", False)
         }
+
+    @loader.command()
+    async def addprefix(self, message: Message):
+        """Add additional prefix. Usage: .addprefix <prefix>"""
+        args = utils.get_args_raw(message)
+        if not args:
+            await utils.answer(message, "<b>❌ Specify prefix to add</b>")
+            return
+        
+        multi_prefixes = self._db.get(main.__name__, "multi_prefixes", [])
+        main_prefix = self._db.get(main.__name__, "command_prefix", ".")
+        
+        if args == main_prefix:
+            await utils.answer(message, f"<b>❌ '{args}' is already main prefix</b>")
+            return
+        
+        if args in multi_prefixes:
+            await utils.answer(message, f"<b>❌ Prefix '{args}' already exists</b>")
+            return
+        
+        multi_prefixes.append(args)
+        self._db.set(main.__name__, "multi_prefixes", multi_prefixes)
+        
+        await utils.answer(
+            message,
+            f"<b>✅ Prefix '{args}' added</b>\n\n<b>Active prefixes:</b> <code>{main_prefix}</code> (main)" + 
+            "".join(f", <code>{p}</code>" for p in multi_prefixes)
+        )
+    
+    @loader.command()
+    async def delprefix(self, message: Message):
+        """Remove additional prefix. Usage: .delprefix <prefix>"""
+        args = utils.get_args_raw(message)
+        if not args:
+            await utils.answer(message, "<b>❌ Specify prefix to remove</b>")
+            return
+        
+        multi_prefixes = self._db.get(main.__name__, "multi_prefixes", [])
+        
+        if args not in multi_prefixes:
+            await utils.answer(message, f"<b>❌ Prefix '{args}' not found</b>")
+            return
+        
+        multi_prefixes.remove(args)
+        self._db.set(main.__name__, "multi_prefixes", multi_prefixes)
+        
+        main_prefix = self._db.get(main.__name__, "command_prefix", ".")
+        await utils.answer(
+            message,
+            f"<b>✅ Prefix '{args}' removed</b>\n\n<b>Active prefixes:</b> <code>{main_prefix}</code> (main)" +
+            ("".join(f", <code>{p}</code>" for p in multi_prefixes) if multi_prefixes else "")
+        )
+    
+    @loader.command()
+    async def prefixes(self, message: Message):
+        """Show all active prefixes"""
+        main_prefix = self._db.get(main.__name__, "command_prefix", ".")
+        multi_prefixes = self._db.get(main.__name__, "multi_prefixes", [])
+        
+        text = f"<b>🔧 Active prefixes:</b>\n\n<b>Main:</b> <code>{main_prefix}</code>"
+        
+        if multi_prefixes:
+            text += "\n\n<b>Additional:</b>\n" + "\n".join(
+                f"  • <code>{p}</code>" for p in multi_prefixes
+            )
+        else:
+            text += "\n\n<i>No additional prefixes</i>"
+        
+        await utils.answer(message, text)
 
     @loader.command()
     async def invokecmd(self, message: Message):

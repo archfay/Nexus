@@ -1,197 +1,399 @@
-<!--
-  ©️ Dan Gazizullin, 2021-2023
-  This file is a part of Hikka Userbot
-  🌐 https://github.com/hikariatama/Hikka
-  You can redistribute it and/or modify it under the terms of the GNU AGPLv3
-  🔑 https://www.gnu.org/licenses/agpl-3.0.html
--->
-
-{% extends "base.jinja2" %}
-
-{% block head %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/5.8.1/lottie.min.js"></script>
-<!-- <script src="//unpkg.com/@dotlottie/player-component@1.0.0/dist/dotlottie-player.js"></script> -->
-<script src="//unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-
-<link href="https://css.gg/css?=arrow-right-r|add|brackets|chevron-right-o|smartphone" rel="stylesheet">
-
-<link rel="stylesheet" href="{{ static("base.css") }}">
-{% endblock %}
-
-{% block content %}
-{% endblock %}
-
-{% block after %}
-
-<div class="blur auth vert_center">
-  <div id="tg_icon"></div>
-  <div class="waiting_for_auth">Waiting for authentification...</div>
-  <div class="confirm_auth">Please, confirm action in <span style="color:#28a0dc">Telegram</span></div>
-</div>
-<div class="auth-code-form blur">
-  <div id="monkey"></div>
-  <div id="monkey-close"></div>
-  <span class="code-caption">Enter the code you recieved from Telegram</span>
-  <input type="text" class="code-input" autocomplete="off">
-  <div class="enter">Enter</div>
-</div>
-<div class="eula-form blur">
-  <div class="vert_center" style="height: 100%">
-    <div>
-      <div id="law"></div>
-      <br><br>
-      <span class="code-caption">You are <span style="color:#c54245">prohibited</span> from adding more than 1 account
-        on the current platform by its EULA.</span>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Userbot - Панель управления</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" href="https://github.com/hikariatama/assets/raw/master/cherry-blossom_1f338.png">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
     </div>
-  </div>
-</div>
-<div class="wrapper">
-  <div class="blur main finish_block">
-    <div id="installation_icon"></div>
-    <div class="title">Nexus is installed</div>
-    <div class="description">
-      Nexus is installed. You can close this page now.
-      <br>
-      <b>It might take a while for installation to fully complete. Please, be patient.</b>
-      <br>
-      <b>Nexus will restart and might send several configuration messages to complete the installation!</b>
-      <br>
-      <span style="font-size: 24px;">Check <span style="color:#28a0dc">Telegram</span> for a message from your <b>inline
-          bot</b></span>
-    </div>
-  </div>
-  <div class="blur main installation">
-    <div class="title">
-      <div class="nexus_label">
-        <div class="label_inner">
-          <img src="{{ platform_emoji }}" class="ringed_planet">
-          &nbsp;Nexus
+    
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp" alt="Nexus" class="logo">
+                <span class="brand-name">Nexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="/pages/docs.html">Документация</a>
+                <a href="/pages/modules.html">Модули</a>
+                <a href="/pages/dashboard.html">Панель</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-      </div>
-    </div><br>
-    <div class="description">Incomprehensibly <span style="color:#c54245">the best</span> userbot<br><span
-        style="color: #18cc18; display: none" class="authorized">Authorized!</span></div>
-    <div class="center">
-      {% if not tg_done %}
-      <div class="button" id="get_started">
-        <div class="horiz_center">
-          <div class="vert_center">
-            Get started
-          </div>
+    </nav>
 
-          <div class="vert_center">
-            <i class="gg-arrow-right-r"></i>
-          </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
         </div>
-      </div>
-      {% else %}
-      <div class="button" id="get_started">
-        <div class="horiz_center">
-          <div class="vert_center">
-            Add phone
-          </div>
-
-          <div class="vert_center">
-            <i class="gg-add"></i>
-          </div>
+        <div class="sidebar-content">
+            <a href="/" class="sidebar-item">
+                <span class="sidebar-icon">🏠</span>
+                <span>Главная</span>
+            </a>
+            <a href="/pages/docs.html" class="sidebar-item">
+                <span class="sidebar-icon">📖</span>
+                <span>Документация</span>
+            </a>
+            <a href="/pages/dashboard.html" class="sidebar-item">
+                <span class="sidebar-icon">🎛️</span>
+                <span>Панель управления</span>
+            </a>
+            <a href="/pages/modules.html" class="sidebar-item">
+                <span class="sidebar-icon">📦</span>
+                <span>Модули</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💻</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>Telegram</span>
+            </a>
         </div>
-      </div>
-      {% endif %}
-      {% if skip_creds and not lavhost %}
-      <div class="button" id="enter_api">
-        <div class="horiz_center">
-          <div class="vert_center">
-            Change API Creds
-          </div>
-
-          <div class="vert_center">
-            <i class="gg-brackets"></i>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      <span id="block_api_id">
-        <label class="api_id" for="api_id">Telegram API ID: </label>
-        <input class="api_id" id="api_id" placeholder="••••" style="width: 4em;">
-      </span>
-      <span id="block_api_hash">
-        <label class="api_hash" for="api_hash">Telegram API hash: </label>
-        <input class="api_hash" id="api_hash" placeholder="••••••••••••••••••••••••••••••••" style="width: 24em;">
-      </span>
-      <span id="block_phone">
-        <label class="phone" for="phone">Phone: </label>
-        <input class="phone" id="phone" placeholder="••••••••••••" style="width: 12em;">
-      </span>
-      <span id="block_custom_bot">
-        <label class="custom_bot" for="custom_bot">Inline bot username (E.g. @username_bot): </label>
-        <input class="custom_bot" id="custom_bot" placeholder="Leave empty to generate automatically"
-          style="width: 20em;" type="text">
-      </span>
-      <span id="block_qr_login">
-        <div class="qr_outer">
-          <div class="qr_inner">
-            <dotlottie-player autoplay loop mode="normal" src="static/4T7FajtZbx.lottie"
-              style="width: 100px; height: 100px">
-            </dotlottie-player>
-          </div>
-        </div>
-        <div class="tg_guide">
-          <ol>
-            <li>
-              <span>Open Telegram on your phone</span>
-            </li>
-            <li>
-              <span>Go to <b>Settings</b> → <b>Devices</b> → <b>Link Desktop Device</b></span>
-            </li>
-            <li>
-              <span>Point your phone at this screen to confirm login</span>
-            </li>
-          </ol>
-        </div>
-      </span>
     </div>
 
-    <div class="horiz_center">
-      <div id="continue_btn" class="button">
-        <div class="horiz_center">
-          <div class="vert_center">
-            Continue
-          </div>
-
-          <div class="vert_center">
-            <i class="gg-chevron-right-o"></i>
-          </div>
+    {% if tg_done %}
+    <!-- Если авторизован - показываем главную страницу -->
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>🚀 Nexus Userbot</h1>
+                <p class="hero-subtitle">Панель управления</p>
+                <div style="margin-top: 40px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/pages/dashboard.html" class="btn btn-primary">
+                        🎛️ Панель управления
+                    </a>
+                    <a href="/pages/docs.html" class="btn btn-secondary">
+                        📖 Документация
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-      <div id="denyqr" class="button">
-        <div class="horiz_center">
-          <div class="vert_center">
-            Auth using phone instead
-          </div>
-
-          <div class="vert_center">
-            <i class="gg-smartphone"></i>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-  <div id="root">
+    {% else %}
+    <!-- Если не авторизован - показываем форму авторизации -->
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>🚀 Nexus Userbot</h1>
+                <p class="hero-subtitle">Добро пожаловать</p>
+            </div>
+        </div>
+    </div>
 
-  </div>
-</div>
-<script>
-  var skip_creds = "{{ skip_creds }}" == "True";
-  var auth_required = true;
-  fetch("/check_session", {
-    method: "POST",
-    credentials: "include"
-  })
-    .then(response => response.text())
-    .then((response) => {
-      auth_required = response != "1";
-    })
-</script>
-<script src="{{ static("root.js") }}"></script>
-{% endblock %}
+    <div class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>Авторизация</h2>
+                        <p>Настройте Nexus для начала работы</p>
+                    </div>
+                    
+                    {% if not skip_creds %}
+                    <div class="info-box">
+                        <strong>ℹ️ Получите API credentials:</strong>
+                        <ol>
+                            <li>Перейдите на <a href="https://my.telegram.org/apps" target="_blank">my.telegram.org/apps</a></li>
+                            <li>Войдите с помощью номера телефона</li>
+                            <li>Создайте новое приложение</li>
+                            <li>Скопируйте API ID и API Hash</li>
+                        </ol>
+                    </div>
+                    
+                    <form class="auth-form" id="apiForm">
+                        <div class="form-group">
+                            <label for="api_id">API ID</label>
+                            <input type="text" id="api_id" placeholder="12345678" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="api_hash">API Hash</label>
+                            <input type="text" id="api_hash" placeholder="abcdef1234567890abcdef1234567890" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            Продолжить →
+                        </button>
+                    </form>
+                    {% else %}
+                    <form class="auth-form" id="phoneForm">
+                        <div class="form-group">
+                            <label for="phone">Номер телефона</label>
+                            <input type="tel" id="phone" placeholder="+7 999 123 45 67" required>
+                            <span class="form-hint">Формат: +7 или +1 и т.д.</span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            Отправить код →
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Nexus</h3>
+                    <p>Продвинутый Telegram userbot</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Ссылки</h3>
+                    <a href="/pages/docs.html">Документация</a>
+                    <a href="/pages/modules.html">Модули</a>
+                    <a href="https://github.com/archfay/Nexus" target="_blank">GitHub</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Сообщество</h3>
+                    <a href="https://t.me/Nexus_Talking" target="_blank">Telegram</a>
+                    <a href="https://github.com/archfay/Nexus/issues" target="_blank">Issues</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 Nexus Userbot. Сделано с ❤️ сообществом</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebarMenu').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebarMenu').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        // Обработка формы API
+        const apiForm = document.getElementById('apiForm');
+        if (apiForm) {
+            apiForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const apiId = document.getElementById('api_id').value.trim();
+                const apiHash = document.getElementById('api_hash').value.trim();
+                
+                if (!apiId || !apiHash) {
+                    alert('Заполните все поля');
+                    return;
+                }
+                
+                if (!/^\d+$/.test(apiId)) {
+                    alert('API ID должен содержать только цифры');
+                    return;
+                }
+                
+                if (apiHash.length !== 32) {
+                    alert('API Hash должен содержать 32 символа');
+                    return;
+                }
+                
+                const btn = apiForm.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span> Проверка...';
+                
+                try {
+                    const response = await fetch('/set_api', {
+                        method: 'PUT',
+                        body: apiHash + apiId
+                    });
+                    
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        alert('Ошибка: ' + errorText);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Продолжить →';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Ошибка соединения: ' + error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Продолжить →';
+                }
+            });
+        }
+
+        // Обработка формы телефона
+        const phoneForm = document.getElementById('phoneForm');
+        if (phoneForm) {
+            phoneForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                let phone = document.getElementById('phone').value.trim();
+                
+                // Валидация и форматирование телефона
+                phone = phone.replace(/[^\d+]/g, '');
+                if (!phone.startsWith('+')) {
+                    phone = '+' + phone;
+                }
+                
+                if (phone.length < 10) {
+                    alert('Номер телефона слишком короткий');
+                    return;
+                }
+                
+                const btn = phoneForm.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span> Отправка...';
+                
+                try {
+                    const response = await fetch('/send_tg_code', {
+                        method: 'POST',
+                        body: phone
+                    });
+                    
+                    if (response.ok || response.status === 200) {
+                        // Показываем форму ввода кода
+                        showCodeForm(phone);
+                    } else {
+                        const errorText = await response.text();
+                        alert('Ошибка: ' + errorText);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Отправить код →';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Ошибка соединения: ' + error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Отправить код →';
+                }
+            });
+        }
+
+        function showCodeForm(phone) {
+            const authCard = document.querySelector('.auth-card');
+            authCard.innerHTML = `
+                <div class="auth-header">
+                    <h2>Введите код</h2>
+                    <p>Код отправлен в Telegram</p>
+                </div>
+                
+                <form class="auth-form" id="codeForm">
+                    <div class="form-group">
+                        <label for="code">Код подтверждения</label>
+                        <input type="text" id="code" placeholder="12345" maxlength="5" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Пароль 2FA (если есть)</label>
+                        <input type="password" id="password" placeholder="Оставьте пустым если нет">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        Войти →
+                    </button>
+                </form>
+            `;
+
+            document.getElementById('codeForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const code = document.getElementById('code').value;
+                const password = document.getElementById('password').value;
+                
+                const btn = e.target.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span> Вход...';
+                
+                try {
+                    const response = await fetch('/tg_code', {
+                        method: 'POST',
+                        body: code + '\n' + phone + (password ? '\n' + password : '')
+                    });
+                    
+                    if (response.ok) {
+                        authCard.innerHTML = `
+                            <div class="success-icon">✅</div>
+                            <h2>Успешно!</h2>
+                            <p>Nexus настраивается и запускается...</p>
+                            <p style="margin-top: 20px; color: #888;">Это может занять несколько секунд</p>
+                            <div style="margin-top: 30px;">
+                                <div class="loading" style="margin: 0 auto;"></div>
+                            </div>
+                        `;
+                        createConfetti();
+                        
+                        // Ждем 5 секунд пока бот перезапустится, затем переходим на главную
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 5000);
+                    } else {
+                        const error = await response.text();
+                        if (error.includes('2FA')) {
+                            alert('Требуется пароль 2FA');
+                            document.getElementById('password').focus();
+                        } else {
+                            alert('Ошибка: ' + error);
+                        }
+                        btn.disabled = false;
+                        btn.innerHTML = 'Войти →';
+                    }
+                } catch (error) {
+                    alert('Ошибка соединения');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Войти →';
+                }
+            });
+        }
+
+        function createConfetti() {
+            const colors = ['#00d4ff', '#ff3366', '#ffcc00', '#667eea'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        width: 10px;
+                        height: 10px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        top: -10px;
+                        left: ${Math.random() * 100}%;
+                        opacity: 1;
+                        border-radius: 50%;
+                        z-index: 9999;
+                        pointer-events: none;
+                        animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
+                    `;
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

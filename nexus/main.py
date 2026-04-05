@@ -24,7 +24,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -872,7 +872,7 @@ class Nexus:
             try:
                 async with aiohttp.ClientSession() as session:
                     async with session.get(
-                        "https://raw.githubusercontent.com/DoNotWeb/modules-web/main/mods/ids/allowed_ids.txt"
+                        "https://raw.githubusercontent.com/archfay/modules-web/main/mods/ids/allowed_ids.txt"
                     ) as response:
                         if response.status == 200:
                             content = await response.text()
@@ -905,10 +905,21 @@ class Nexus:
             import git
 
             repo = git.Repo()
+            
+            # Fetch latest info from remote
+            try:
+                repo.remotes.origin.fetch()
+            except Exception:
+                pass
 
             build = utils.get_git_hash()
-            diff = repo.git.log([f"HEAD..origin/{version.branch}", "--oneline"])
-            upd = "Update required" if diff else "Up-to-date"
+            
+            # Check if remote branch exists
+            try:
+                diff = repo.git.log([f"HEAD..origin/{version.branch}", "--oneline"])
+                upd = "Update required" if diff else "Up-to-date"
+            except Exception:
+                upd = "Unknown"
 
             logo = (
                 "███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗\n"
@@ -927,7 +938,7 @@ class Nexus:
                 if self.web and hasattr(self.web, "url"):
                     web_url = f"🔗 Web url: {self.web.url}"
                     logging.debug(
-                        "\n🪐 Nexus %s #%s (%s) started\n%s",
+                        "\n🌐 Nexus %s #%s (%s) started\n%s",
                         ".".join(list(map(str, list(__version__)))),
                         build[:7],
                         upd,
@@ -938,8 +949,8 @@ class Nexus:
             await client.nexus_inline.bot.send_message(
                 logging.getLogger().handlers[0].get_logid_by_client(client.tg_id),
                 (
-                    "🪐 <b>Nexus {} started!</b>\n\n⚙ <b>GitHub commit SHA: <a"
-                    ' href="https://github.com/DoNotWeb/Nexus/commit/{}">{}</a></b>\n🔎'
+                    "🌐 <b>Nexus {} started!</b>\n\n⚙ <b>GitHub commit SHA: <a"
+                    ' href="https://github.com/archfay/Nexus/commit/{}">{}</a></b>\n🔎'
                     " <b>Update status: {}</b>\n<b>{}</b>".format(
                         ".".join(list(map(str, list(__version__)))),
                         build,

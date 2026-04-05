@@ -6,7 +6,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -46,10 +46,10 @@ logger = logging.getLogger(__name__)
 
 
 @loader.tds
-class NexusBackupMod(loader.Module):
+class nexusBackupMod(loader.Module):
     """Handles database and modules backups"""
 
-    strings = {"name": "NexusBackup"}
+    strings = {"name": "nexusBackup"}
 
     async def client_ready(self):
         if not self.get("period"):
@@ -86,7 +86,7 @@ class NexusBackupMod(loader.Module):
             "📼 Your database backups will appear here",
             silent=True,
             archive=True,
-            avatar="https://raw.githubusercontent.com/DoNotWeb/assets/refs/heads/main/nexus/nexus_backups.png",
+            avatar="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_backups.png",
             _folder="nexus",
             invite_bot=True,
         )
@@ -204,7 +204,7 @@ class NexusBackupMod(loader.Module):
         except loader.StopLoop:
             raise
         except Exception:
-            logger.exception("NexusBackup failed")
+            logger.exception("nexusBackup failed")
             await asyncio.sleep(60)
 
     @loader.callback_handler()

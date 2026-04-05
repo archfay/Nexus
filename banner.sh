@@ -2,4 +2,4 @@
 
 echo -ne "\\033[2J\033[3;1f"
 eval "cat ~/Nexus/assets/banner.txt"
-printf "\n\n\033[1;32mNexus is running!\033[0m"
+printf "\n\n\033[1;32mnexus is running!\033[0m"

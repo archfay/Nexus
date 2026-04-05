@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация - Nexus Userbot</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/docs.css">
+    <link rel="icon" href="https://github.com/hikariatama/assets/raw/master/cherry-blossom_1f338.png">
+</head>
+<body>
+    <!-- Декоративные элементы фона -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="/static/images/logo.png" alt="Nexus" class="logo" onerror="this.src='https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp'">
+                <span class="brand-name">Nexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="docs.html" class="active">Документация</a>
+                <a href="modules.html">Модули</a>
+                <a href="dashboard.html">Панель</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Боковое меню -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="/" class="sidebar-item">
+                <span class="sidebar-icon">🏠</span>
+                <span>Главная</span>
+            </a>
+            <a href="docs.html" class="sidebar-item">
+                <span class="sidebar-icon">📖</span>
+                <span>Документация</span>
+            </a>
+            <a href="dashboard.html" class="sidebar-item">
+                <span class="sidebar-icon">🎛️</span>
+                <span>Панель управления</span>
+            </a>
+            <a href="modules.html" class="sidebar-item">
+                <span class="sidebar-icon">📦</span>
+                <span>Модули</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💻</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>Telegram</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>🚀 Начало работы</h3>
+                <a href="#intro" class="active">Введение</a>
+                <a href="#installation">Установка</a>
+                <a href="#first-run">Первый запуск</a>
+                <a href="#commands">Базовые команды</a>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>📦 Модули</h3>
+                <a href="#creating-modules">Создание модулей</a>
+                <a href="#module-structure">Структура модуля</a>
+                <a href="#decorators">Декораторы</a>
+                <a href="#config">Конфигурация</a>
+                <a href="#database">База данных</a>
+                <a href="#inline">Inline элементы</a>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>📚 API</h3>
+                <a href="#api-reference">API Reference</a>
+                <a href="#utils">Utils</a>
+                <a href="#loader">Loader</a>
+            </div>
+        </aside>
+
+        <main class="docs-content">
+            <section id="intro" class="doc-section">
+                <h1>📖 Документация Nexus</h1>
+                <p class="lead">Полное руководство по использованию и разработке для Nexus Userbot</p>
+                
+                <div class="info-card">
+                    <h2>Что такое Nexus?</h2>
+                    <p><strong>Nexus</strong> — это продвинутый Telegram userbot с расширенными возможностями безопасности и современными функциями. Он позволяет автоматизировать действия в Telegram, добавлять кастомные команды и расширять функциональность мессенджера.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-box">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Безопасность</h3>
+                        <ul>
+                            <li>Встроенная защита API</li>
+                            <li>Кэширование сущностей</li>
+                            <li>Автоматическое резервное копирование</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Производительность</h3>
+                        <ul>
+                            <li>Поддержка последнего Telegram Layer</li>
+                            <li>Быстрое исправление багов</li>
+                            <li>Оптимизированная работа</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-icon">🎨</div>
+                        <h3>Интерфейс</h3>
+                        <ul>
+                            <li>Современный веб-интерфейс</li>
+                            <li>Inline элементы</li>
+                            <li>Интуитивное управление</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-icon">📦</div>
+                        <h3>Модули</h3>
+                        <ul>
+                            <li>Богатая библиотека модулей</li>
+                            <li>Совместимость с FTG, GeekTG, Hikka</li>
+                            <li>Простое создание модулей</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="first-run" class="doc-section">
+                <h2>🎯 Первый запуск</h2>
+                
+                <h3>Получение API credentials</h3>
+                <ol>
+                    <li>Перейдите на <a href="https://my.telegram.org/apps" target="_blank">my.telegram.org/apps</a></li>
+                    <li>Войдите с помощью номера телефона</li>
+                    <li>Создайте новое приложение</li>
+                    <li>Скопируйте <code>api_id</code> и <code>api_hash</code></li>
+                </ol>
+
+                <h3>Настройка</h3>
+                <p>При первом запуске Nexus попросит:</p>
+                <ul>
+                    <li><strong>API ID</strong> - числовой идентификатор</li>
+                    <li><strong>API Hash</strong> - строка из 32 символов</li>
+                    <li><strong>Номер телефона</strong> - в международном формате</li>
+                    <li><strong>Код подтверждения</strong> - из Telegram</li>
+                    <li><strong>2FA пароль</strong> - если включен</li>
+                </ul>
+
+                <h3>Веб-интерфейс</h3>
+                <p>После успешной авторизации откройте браузер:</p>
+                <div class="code-block">
+                    <pre><code>http://localhost:8080</code></pre>
+                </div>
+            </section>
+
+            <section id="commands" class="doc-section">
+                <h2>⚡ Базовые команды</h2>
+                
+                <h3>Управление модулями</h3>
+                <div class="code-block">
+                    <pre><code>.loadmod &lt;имя&gt;     # Загрузить модуль
+.unloadmod &lt;имя&gt;   # Выгрузить модуль
+.dlmod &lt;url&gt;       # Скачать модуль
+.modules           # Список модулей</code></pre>
+                </div>
+
+                <h3>Настройки</h3>
+                <div class="code-block">
+                    <pre><code>.config &lt;модуль&gt;   # Настройки модуля
+.setprefix &lt;префикс&gt; # Изменить префикс
+.settings          # Общие настройки</code></pre>
+                </div>
+
+                <h3>Информация</h3>
+                <div class="code-block">
+                    <pre><code>.help              # Справка
+.info              # Информация о Nexus
+.ping              # Проверка задержки
+.uptime            # Время работы</code></pre>
+                </div>
+
+                <h3>Утилиты</h3>
+                <div class="code-block">
+                    <pre><code>.backup            # Создать бэкап
+.update            # Обновить Nexus
+.restart           # Перезапустить
+.terminal &lt;cmd&gt;    # Выполнить команду</code></pre>
+                </div>
+            </section>
+                <h2>🔧 Установка</h2>
+                
+                <h3>Системные требования</h3>
+                <ul>
+                    <li><strong>Python:</strong> 3.9 - 3.13</li>
+                    <li><strong>ОС:</strong> Linux, macOS, Windows (WSL)</li>
+                    <li><strong>RAM:</strong> минимум 512 MB</li>
+                    <li><strong>Диск:</strong> минимум 100 MB</li>
+                </ul>
+
+                <h3>Быстрая установка</h3>
+                <div class="code-block">
+                    <pre><code>apt update && apt install git python3 -y && \
+git clone https://github.com/archfay/Nexus && \
+cd Nexus && \
+pip install -r requirements.txt && \
+python3 -m nexus</code></pre>
+                </div>
+
+                <h3>Пошаговая установка</h3>
+                <div class="code-block">
+                    <pre><code># 1. Клонировать репозиторий
+git clone https://github.com/archfay/Nexus
+cd Nexus
+
+# 2. Установить зависимости
+pip install -r requirements.txt
+
+# 3. Запустить Nexus
+python3 -m nexus</code></pre>
+                </div>
+            </section>
+
+            <section id="creating-modules" class="doc-section">
+                <h2>📦 Создание модулей</h2>
+                
+                <h3>Базовая структура</h3>
+                <div class="code-block">
+                    <pre><code>from .. import loader, utils
+from herokutl.tl.types import Message
+
+@loader.tds
+class MyModuleMod(loader.Module):
+    """Описание модуля"""
+    
+    strings = {"name": "MyModule"}
+    
+    @loader.command()
+    async def mycmd(self, message: Message):
+        """Описание команды"""
+        await utils.answer(message, "Hello from Nexus!")</code></pre>
+                </div>
+
+                <h3>Декораторы</h3>
+                <ul>
+                    <li><code>@loader.tds</code> — регистрирует класс как модуль</li>
+                    <li><code>@loader.command()</code> — регистрирует команду</li>
+                    <li><code>@loader.watcher()</code> — создаёт обработчик событий</li>
+                    <li><code>@loader.loop()</code> — создаёт периодическую задачу</li>
+                </ul>
+
+                <h3>Конфигурация</h3>
+                <div class="code-block">
+                    <pre><code>def __init__(self):
+    self.config = loader.ModuleConfig(
+        loader.ConfigValue(
+            "auto_reply",
+            True,
+            "Автоматический ответ",
+            validator=loader.validators.Boolean()
+        )
+    )</code></pre>
+                </div>
+            </section>
+
+            <section id="module-structure" class="doc-section">
+                <h2>🏛️ Структура модуля</h2>
+                
+                <h3>Полная структура</h3>
+                <div class="code-block">
+                    <pre><code>from .. import loader, utils
+from telethon.tl.types import Message
+import logging
+
+logger = logging.getLogger(__name__)
+
+@loader.tds
+class ExampleMod(loader.Module):
+    """Пример модуля с полной структурой"""
+    
+    strings = {
+        "name": "Example",
+        "loading": "⏳ Загрузка...",
+        "done": "✅ Готово!"
+    }
+    
+    strings_ru = {
+        "loading": "⏳ Загрузка...",
+        "done": "✅ Готово!"
+    }
+    
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "auto_reply",
+                True,
+                "Автоответ",
+                validator=loader.validators.Boolean()
+            ),
+            loader.ConfigValue(
+                "delay",
+                5,
+                "Задержка (сек)",
+                validator=loader.validators.Integer(minimum=1)
+            )
+        )
+    
+    async def client_ready(self, client, db):
+        """Вызывается при запуске"""
+        self.client = client
+        self.db = db
+        logger.info("Module loaded")
+    
+    @loader.command()
+    async def example(self, message: Message):
+        """Пример команды"""
+        await utils.answer(message, self.strings["done"])
+    
+    @loader.watcher()
+    async def watcher(self, message: Message):
+        """Обработчик всех сообщений"""
+        if "trigger" in message.text.lower():
+            await message.reply("Обнаружен триггер!")</code></pre>
+                </div>
+
+                <h3>Обязательные элементы</h3>
+                <ul>
+                    <li><code>@loader.tds</code> - декоратор класса</li>
+                    <li>Имя класса должно заканчиваться на <code>Mod</code></li>
+                    <li>Docstring с описанием модуля</li>
+                    <li><code>strings["name"]</code> - имя модуля</li>
+                </ul>
+            </section>
+
+            <section id="decorators" class="doc-section">
+                <h2>🎯 Декораторы</h2>
+                
+                <h3>@loader.command()</h3>
+                <p>Регистрирует команду</p>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def mycommand(self, message: Message):
+    """Описание команды"""
+    await utils.answer(message, "Ответ")</code></pre>
+                </div>
+
+                <h3>@loader.watcher()</h3>
+                <p>Обработчик всех сообщений</p>
+                <div class="code-block">
+                    <pre><code>@loader.watcher()
+async def watcher(self, message: Message):
+    """Обрабатывает все сообщения"""
+    if "keyword" in message.text:
+        await message.reply("Найдено!")
+
+# Только входящие
+@loader.watcher("in")
+async def in_watcher(self, message: Message):
+    pass
+
+# Только исходящие
+@loader.watcher("out")
+async def out_watcher(self, message: Message):
+    pass</code></pre>
+                </div>
+
+                <h3>@loader.loop()</h3>
+                <p>Периодическая задача</p>
+                <div class="code-block">
+                    <pre><code>@loader.loop(interval=60)  # каждые 60 секунд
+async def my_loop(self):
+    """Выполняется периодически"""
+    logger.info("Loop executed")</code></pre>
+                </div>
+            </section>
+
+            <section id="config" class="doc-section">
+                <h2>⚙️ Конфигурация</h2>
+                
+                <h3>Создание настроек</h3>
+                <div class="code-block">
+                    <pre><code>def __init__(self):
+    self.config = loader.ModuleConfig(
+        loader.ConfigValue(
+            "api_key",
+            None,
+            "API ключ",
+            validator=loader.validators.String()
+        ),
+        loader.ConfigValue(
+            "timeout",
+            30,
+            "Таймаут (сек)",
+            validator=loader.validators.Integer(minimum=1, maximum=300)
+        ),
+        loader.ConfigValue(
+            "enabled",
+            True,
+            "Включить модуль",
+            validator=loader.validators.Boolean()
+        ),
+        loader.ConfigValue(
+            "mode",
+            "auto",
+            "Режим работы",
+            validator=loader.validators.Choice(["auto", "manual"])
+        )
+    )</code></pre>
+                </div>
+
+                <h3>Использование</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def mycmd(self, message: Message):
+    api_key = self.config["api_key"]
+    timeout = self.config["timeout"]
+    
+    if not self.config["enabled"]:
+        return
+    
+    await utils.answer(message, f"Timeout: {timeout}")</code></pre>
+                </div>
+
+                <h3>Валидаторы</h3>
+                <ul>
+                    <li><code>String()</code> - строка</li>
+                    <li><code>Integer(minimum, maximum)</code> - целое число</li>
+                    <li><code>Float(minimum, maximum)</code> - дробное число</li>
+                    <li><code>Boolean()</code> - да/нет</li>
+                    <li><code>Choice([...])</code> - выбор из списка</li>
+                    <li><code>Series()</code> - список значений</li>
+                </ul>
+            </section>
+
+            <section id="database" class="doc-section">
+                <h2>💾 База данных</h2>
+                
+                <h3>Основные операции</h3>
+                <div class="code-block">
+                    <pre><code># Сохранить значение
+self.db.set("ModuleName", "key", "value")
+
+# Получить значение
+value = self.db.get("ModuleName", "key", default="default")
+
+# Удалить значение
+self.db.delete("ModuleName", "key")
+
+# Получить все данные модуля
+all_data = self.db.get("ModuleName", "__config__", {})</code></pre>
+                </div>
+
+                <h3>Пример: Счетчик</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def count(self, message: Message):
+    """Счетчик вызовов"""
+    count = self.db.get("Counter", "count", 0)
+    count += 1
+    self.db.set("Counter", "count", count)
+    await utils.answer(message, f"Вызовов: {count}")</code></pre>
+                </div>
+
+                <h3>Пример: Список</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def additem(self, message: Message):
+    """<текст> - Добавить в список"""
+    args = utils.get_args_raw(message)
+    items = self.db.get("List", "items", [])
+    items.append(args)
+    self.db.set("List", "items", items)
+    await utils.answer(message, f"✅ Добавлено: {args}")
+
+@loader.command()
+async def listitems(self, message: Message):
+    """Показать список"""
+    items = self.db.get("List", "items", [])
+    text = "📋 Список:\n" + "\n".join(f"{i+1}. {item}" for i, item in enumerate(items))
+    await utils.answer(message, text)</code></pre>
+                </div>
+            </section>
+
+            <section id="inline" class="doc-section">
+                <h2>🖱️ Inline элементы</h2>
+                
+                <h3>Inline кнопки</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def menu(self, message: Message):
+    """Показать меню"""
+    await self.inline.form(
+        message=message,
+        text="🎯 Выберите действие:",
+        reply_markup=[
+            [{"text": "✅ Кнопка 1", "callback": self.btn1}],
+            [{"text": "❌ Кнопка 2", "callback": self.btn2}],
+            [{"text": "🔄 Обновить", "callback": self.refresh}]
+        ]
+    )
+
+async def btn1(self, call):
+    await call.answer("Нажата кнопка 1", show_alert=True)
+    await call.edit("✅ Выбрана кнопка 1")</code></pre>
+                </div>
+
+                <h3>Inline галерея</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def gallery(self, message: Message):
+    """Показать галерею"""
+    await self.inline.gallery(
+        message=message,
+        items=[
+            {"text": "Слайд 1", "photo": "url1.jpg"},
+            {"text": "Слайд 2", "photo": "url2.jpg"},
+            {"text": "Слайд 3", "photo": "url3.jpg"}
+        ]
+    )</code></pre>
+                </div>
+
+                <h3>Inline список</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def list(self, message: Message):
+    """Показать список"""
+    await self.inline.list(
+        message=message,
+        strings=["📌 Элемент 1", "📌 Элемент 2", "📌 Элемент 3"]
+    )</code></pre>
+                </div>
+            </section>
+                <h2>📚 API Reference</h2>
+                
+                <h3>utils.answer()</h3>
+                <p>Отправить или отредактировать сообщение</p>
+                <div class="code-block">
+                    <pre><code>await utils.answer(message, "Текст")</code></pre>
+                </div>
+
+                <h3>utils.get_args()</h3>
+                <p>Получить аргументы команды</p>
+                <div class="code-block">
+                    <pre><code>args = utils.get_args(message)  # ["arg1", "arg2"]
+args_raw = utils.get_args_raw(message)  # "arg1 arg2"</code></pre>
+                </div>
+
+                <h3>Database</h3>
+                <div class="code-block">
+                    <pre><code># Сохранить
+self.db.set("Module", "key", "value")
+
+# Получить
+value = self.db.get("Module", "key", default="default")
+
+# Удалить
+self.db.delete("Module", "key")</code></pre>
+                </div>
+            </section>
+
+            <div class="doc-footer">
+                <p>Нужна помощь? Присоединяйтесь к <a href="https://t.me/Nexus_Talking" target="_blank">Telegram сообществу</a></p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/docs.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
+
+
+            <section id="utils" class="doc-section">
+                <h2>🛠️ Utils</h2>
+                
+                <h3>utils.answer()</h3>
+                <div class="code-block">
+                    <pre><code>await utils.answer(message, "Текст")
+await utils.answer(message, "Текст", reply_markup=buttons)</code></pre>
+                </div>
+
+                <h3>utils.get_target()</h3>
+                <div class="code-block">
+                    <pre><code>target = await utils.get_target(message)</code></pre>
+                </div>
+
+                <h3>Работа с сообщениями</h3>
+                <div class="code-block">
+                    <pre><code># Получить reply сообщение
+reply = await message.get_reply_message()
+
+# Удалить сообщение
+await message.delete()
+
+# Редактировать
+await message.edit("Новый текст")
+
+# Ответить
+await message.reply("Ответ")</code></pre>
+                </div>
+            </section>
+
+            <section id="loader" class="doc-section">
+                <h2>📦 Loader</h2>
+                
+                <h3>Жизненный цикл</h3>
+                <div class="code-block">
+                    <pre><code>async def on_load(self):
+    """Вызывается при загрузке модуля"""
+    pass
+
+async def on_unload(self):
+    """Вызывается при выгрузке"""
+    pass
+
+async def client_ready(self, client, db):
+    """Вызывается когда клиент готов"""
+    self.client = client
+    self.db = db</code></pre>
+                </div>
+
+                <h3>Работа с чатами</h3>
+                <div class="code-block">
+                    <pre><code># Получить информацию о чате
+chat = await message.get_chat()
+
+# Получить участников
+async for user in self.client.iter_participants(chat):
+    print(user.id, user.first_name)
+
+# Отправить сообщение
+await self.client.send_message(chat_id, "Текст")</code></pre>
+                </div>
+
+                <h3>HTTP запросы</h3>
+                <div class="code-block">
+                    <pre><code>import aiohttp
+
+async with aiohttp.ClientSession() as session:
+    async with session.get("https://api.example.com") as resp:
+        data = await resp.json()
+        
+    async with session.post("https://api.example.com", json={"key": "value"}) as resp:
+        result = await resp.text()</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="doc-section">
+                <h2>📝 Примеры модулей</h2>
+                
+                <h3>Простой модуль</h3>
+                <div class="code-block">
+                    <pre><code>from .. import loader, utils
+
+@loader.tds
+class HelloMod(loader.Module):
+    """Приветствие"""
+    
+    strings = {"name": "Hello"}
+    
+    @loader.command()
+    async def hello(self, message):
+        """Приветствие"""
+        await utils.answer(message, "👋 Привет!")</code></pre>
+                </div>
+
+                <h3>Модуль с конфигом</h3>
+                <div class="code-block">
+                    <pre><code>from .. import loader, utils
+
+@loader.tds
+class AutoReplyMod(loader.Module):
+    """Автоответчик"""
+    
+    strings = {"name": "AutoReply"}
+    
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "reply_text",
+                "Я сейчас занят",
+                "Текст ответа"
+            )
+        )
+    
+    @loader.watcher("in")
+    async def watcher(self, message):
+        if message.is_private:
+            await message.reply(self.config["reply_text"])</code></pre>
+                </div>
+
+                <h3>Модуль с БД</h3>
+                <div class="code-block">
+                    <pre><code>from .. import loader, utils
+
+@loader.tds
+class NotesMod(loader.Module):
+    """Заметки"""
+    
+    strings = {"name": "Notes"}
+    
+    @loader.command()
+    async def addnote(self, message):
+        """<имя> <текст> - Добавить заметку"""
+        args = utils.get_args_raw(message).split(maxsplit=1)
+        if len(args) < 2:
+            await utils.answer(message, "❌ Укажите имя и текст")
+            return
+        
+        name, text = args
+        notes = self.db.get("Notes", "notes", {})
+        notes[name] = text
+        self.db.set("Notes", "notes", notes)
+        await utils.answer(message, f"✅ Заметка '{name}' сохранена")
+    
+    @loader.command()
+    async def note(self, message):
+        """<имя> - Показать заметку"""
+        name = utils.get_args_raw(message)
+        notes = self.db.get("Notes", "notes", {})
+        
+        if name in notes:
+            await utils.answer(message, notes[name])
+        else:
+            await utils.answer(message, "❌ Заметка не найдена")</code></pre>
+                </div>
+            </section>
+
+            <section id="security" class="doc-section">
+                <h2>🔒 Безопасность</h2>
+                
+                <div class="warning-box">
+                    <h3>⚠️ Важно!</h3>
+                    <ul>
+                        <li>Не используйте <code>eval()</code> с пользовательским вводом</li>
+                        <li>Не храните токены в открытом виде</li>
+                        <li>Проверяйте права доступа</li>
+                        <li>Используйте <code>try-except</code></li>
+                    </ul>
+                </div>
+
+                <h3>Проверка прав</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def admin_cmd(self, message):
+    me = await self.client.get_me()
+    if message.sender_id != me.id:
+        return
+    
+    await utils.answer(message, "✅ Выполнено")</code></pre>
+                </div>
+
+                <h3>Безопасное хранение</h3>
+                <div class="code-block">
+                    <pre><code>@loader.command()
+async def settoken(self, message):
+    token = utils.get_args_raw(message)
+    self.db.set("MyModule", "token", token)
+    await message.delete()
+    await self.client.send_message(message.chat_id, "✅ Токен сохранен")</code></pre>
+                </div>
+            </section>
+
+            <section id="faq" class="doc-section">
+                <h2>❓ FAQ</h2>
+                
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <strong>Как загрузить модуль?</strong>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Используйте <code>.loadmod имя_файла</code> или <code>.dlmod URL</code></p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <strong>Где хранятся модули?</strong>
+                        </div>
+                        <div class="faq-answer">
+                            <p>В папке <code>loaded_modules/</code></p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <strong>Как обновить Nexus?</strong>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Команда <code>.update</code> или <code>git pull && pip install -r requirements.txt</code></p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <strong>Можно ли использовать внешние библиотеки?</strong>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Да, установите через <code>pip install</code> и импортируйте в модуле</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="warning-box" style="margin-top: 60px;">
+                <h3>🚨 Важное предупреждение</h3>
+                <p>Установка модулей от непроверенных разработчиков может привести к повреждению вашего аккаунта. Всегда проверяйте код перед установкой!</p>
+            </div>

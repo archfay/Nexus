@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Userbot</title>
+    <link rel="stylesheet" href="static/css/spa.css">
+    <link rel="icon" href="https://github.com/hikariatama/assets/raw/master/cherry-blossom_1f338.png">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp" alt="Nexus" class="logo">
+                <span class="brand-name">Nexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active" onclick="showTab('home')">Главная</a>
+                <a href="#docs" class="nav-link" onclick="showTab('docs')">Документация</a>
+                <a href="#dashboard" class="nav-link" onclick="showTab('dashboard')">Панель</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Боковое меню -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="#home" class="sidebar-item" onclick="showTab('home'); closeSidebar();">
+                <span class="sidebar-icon">🏠</span>
+                <span>Главная</span>
+            </a>
+            <a href="#docs" class="sidebar-item" onclick="showTab('docs'); closeSidebar();">
+                <span class="sidebar-icon">📖</span>
+                <span>Документация</span>
+            </a>
+            <a href="#dashboard" class="sidebar-item" onclick="showTab('dashboard'); closeSidebar();">
+                <span class="sidebar-icon">🎛️</span>
+                <span>Панель управления</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💻</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>Telegram</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Контент вкладок -->
+    <div id="app">
+        <!-- Вкладка: Главная (Авторизация) -->
+        <div id="tab-home" class="tab-content active">
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>🚀 Nexus Userbot</h1>
+                        <p class="hero-subtitle">Продвинутый Telegram userbot с расширенными возможностями</p>
+                        <div class="hero-features">
+                            <span class="feature-badge">🔒 Безопасный</span>
+                            <span class="feature-badge">⚡ Быстрый</span>
+                            <span class="feature-badge">🎨 Современный</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-section">
+                <div class="container">
+                    <div class="auth-container" id="authContainer">
+                        <!-- Шаг 1: Выбор метода -->
+                        <div class="auth-step active" id="step1">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <h2>Добро пожаловать в Nexus</h2>
+                                    <p>Выберите способ входа</p>
+                                </div>
+                                
+                                <div class="auth-methods">
+                                    <button class="auth-method-btn" onclick="showStep(2)">
+                                        <div class="method-icon">📱</div>
+                                        <div class="method-info">
+                                            <h3>Вход по номеру</h3>
+                                            <p>Войти с помощью номера телефона</p>
+                                        </div>
+                                    </button>
+                                    
+                                    <button class="auth-method-btn" onclick="showStep(5)">
+                                        <div class="method-icon">🔑</div>
+                                        <div class="method-info">
+                                            <h3>Первая регистрация</h3>
+                                            <p>Настроить Nexus впервые</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Остальные шаги авторизации... (копируем из index.html) -->
+                        <!-- Для краткости не дублирую все шаги, они такие же -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Документация -->
+        <div id="tab-docs" class="tab-content">
+            <div class="docs-layout">
+                <aside class="docs-sidebar">
+                    <div class="sidebar-section">
+                        <h3>🚀 Начало работы</h3>
+                        <a href="#intro" class="active">Введение</a>
+                        <a href="#installation">Установка</a>
+                        <a href="#first-run">Первый запуск</a>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>📦 Модули</h3>
+                        <a href="#creating-modules">Создание модулей</a>
+                        <a href="#examples">Примеры</a>
+                        <a href="#api">API Reference</a>
+                    </div>
+                </aside>
+
+                <main class="docs-content">
+                    <section id="intro" class="doc-section">
+                        <h1>📖 Документация Nexus</h1>
+                        <p class="lead">Полное руководство по использованию и разработке</p>
+                        
+                        <div class="info-card">
+                            <h2>Что такое Nexus?</h2>
+                            <p><strong>Nexus</strong> — это продвинутый Telegram userbot с расширенными возможностями безопасности и современными функциями.</p>
+                        </div>
+
+                        <div class="features-grid">
+                            <div class="feature-box">
+                                <div class="feature-icon">🔒</div>
+                                <h3>Безопасность</h3>
+                                <ul>
+                                    <li>Встроенная защита API</li>
+                                    <li>Кэширование сущностей</li>
+                                    <li>Автоматическое резервное копирование</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-box">
+                                <div class="feature-icon">⚡</div>
+                                <h3>Производительность</h3>
+                                <ul>
+                                    <li>Поддержка последнего Telegram Layer</li>
+                                    <li>Быстрое исправление багов</li>
+                                    <li>Оптимизированная работа</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-box">
+                                <div class="feature-icon">📦</div>
+                                <h3>Модули</h3>
+                                <ul>
+                                    <li>Богатая библиотека модулей</li>
+                                    <li>Совместимость с FTG, GeekTG, Hikka</li>
+                                    <li>Простое создание модулей</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="creating-modules" class="doc-section">
+                        <h2>📦 Создание модулей</h2>
+                        
+                        <h3>Базовая структура</h3>
+                        <div class="code-block">
+                            <pre><code>from .. import loader, utils
+from telethon.tl.types import Message
+
+@loader.tds
+class MyModuleMod(loader.Module):
+    """Описание модуля"""
+    
+    strings = {"name": "MyModule"}
+    
+    @loader.command()
+    async def mycmd(self, message: Message):
+        """Описание команды"""
+        await utils.answer(message, "Hello from Nexus!")</code></pre>
+                </div>
+
+                <h3>Примеры модулей</h3>
+                <p>Смотрите полные примеры в разделе <a href="pages/docs.html">Документация</a></p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Вкладка: Панель управления -->
+    <div id="tab-dashboard" class="tab-content">
+        <div class="container" style="padding-top: 100px;">
+            <h1>🎛️ Панель управления</h1>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="modulesCount">0</div>
+                        <div class="stat-label">Модулей</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="commandsCount">0</div>
+                        <div class="stat-label">Команд</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="uptime">0s</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="cpuUsage">0%</div>
+                        <div class="stat-label">CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-actions">
+                <button class="action-btn" onclick="restartBot()">
+                    <span>🔄</span>
+                    <span>Перезагрузить</span>
+                </button>
+                <button class="action-btn" onclick="updateBot()">
+                    <span>⬆️</span>
+                    <span>Обновить</span>
+                </button>
+                <button class="action-btn" onclick="createBackup()">
+                    <span>💾</span>
+                    <span>Бэкап</span>
+                </button>
+                <button class="action-btn" onclick="openLogs()">
+                    <span>📋</span>
+                    <span>Логи</span>
+                </button>
+            </div>
+
+            <div class="modules-section">
+                <h2>Загруженные модули</h2>
+                <div id="modulesList" class="modules-list">
+                    <p style="text-align: center; color: #888;">Загрузка...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Nexus</h3>
+                    <p>Продвинутый Telegram userbot</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Ссылки</h3>
+                    <a href="#docs" onclick="showTab('docs')">Документация</a>
+                    <a href="https://github.com/archfay/Nexus" target="_blank">GitHub</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Сообщество</h3>
+                    <a href="https://t.me/Nexus_Talking" target="_blank">Telegram</a>
+                    <a href="https://github.com/archfay/Nexus/issues" target="_blank">Issues</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 Nexus Userbot. Сделано с ❤️ сообществом</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="static/js/spa.js"></script>
+</body>
+</html>

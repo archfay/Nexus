@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления - Nexus Userbot</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="icon" href="https://github.com/hikariatama/assets/raw/master/cherry-blossom_1f338.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="/static/images/logo.png" alt="Nexus" class="logo" onerror="this.src='https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp'">
+                <span class="brand-name">Nexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="docs.html">Документация</a>
+                <a href="modules.html">Модули</a>
+                <a href="dashboard.html" class="active">Панель</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Боковое меню -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="close-btn" onclick="closeSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="/" class="sidebar-item">
+                <span class="sidebar-icon">🏠</span>
+                <span>Главная</span>
+            </a>
+            <a href="docs.html" class="sidebar-item">
+                <span class="sidebar-icon">📖</span>
+                <span>Документация</span>
+            </a>
+            <a href="dashboard.html" class="sidebar-item">
+                <span class="sidebar-icon">🎛️</span>
+                <span>Панель управления</span>
+            </a>
+            <a href="modules.html" class="sidebar-item">
+                <span class="sidebar-icon">📦</span>
+                <span>Модули</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="https://github.com/archfay/Nexus" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💻</span>
+                <span>GitHub</span>
+            </a>
+            <a href="https://t.me/Nexus_Talking" target="_blank" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>Telegram</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Панель управления</h1>
+                <div class="user-info">
+                    <span class="user-name" id="userName">@username</span>
+                    <span class="status-badge online">Онлайн</span>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="modulesCount">15</div>
+                        <div class="stat-label">Модулей</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="commandsCount">87</div>
+                        <div class="stat-label">Команд</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="uptime">2h 34m</div>
+                        <div class="stat-label">Время работы</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="cpuUsage">12%</div>
+                        <div class="stat-label">CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <h2>Быстрые действия</h2>
+                <div class="actions-grid">
+                    <button class="action-btn" onclick="restartBot()">
+                        <span class="action-icon">🔄</span>
+                        <span>Перезагрузить</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="updateBot()">
+                        <span class="action-icon">⬆️</span>
+                        <span>Обновить</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="createBackup()">
+                        <span class="action-icon">💾</span>
+                        <span>Бэкап</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="openLogs()">
+                        <span class="action-icon">📋</span>
+                        <span>Логи</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Модули -->
+            <div class="modules-section">
+                <div class="section-header">
+                    <h2>Загруженные модули</h2>
+                    <button class="btn btn-primary" onclick="showLoadModuleModal()">
+                        + Загрузить модуль
+                    </button>
+                </div>
+
+                <div class="modules-list" id="modulesList">
+                    <!-- Модули будут загружены динамически -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <h3>Loader</h3>
+                            <span class="module-badge core">Core</span>
+                        </div>
+                        <p class="module-description">Управление модулями</p>
+                        <div class="module-commands">
+                            <span class="command-tag">.dlmod</span>
+                            <span class="command-tag">.unloadmod</span>
+                            <span class="command-tag">.modules</span>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <h3>Settings</h3>
+                            <span class="module-badge core">Core</span>
+                        </div>
+                        <p class="module-description">Настройки юзербота</p>
+                        <div class="module-commands">
+                            <span class="command-tag">.settings</span>
+                            <span class="command-tag">.config</span>
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <h3>Help</h3>
+                            <span class="module-badge core">Core</span>
+                        </div>
+                        <p class="module-description">Справка по командам</p>
+                        <div class="module-commands">
+                            <span class="command-tag">.help</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Настройки -->
+            <div class="settings-section">
+                <h2>Настройки</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Префикс команд</h3>
+                            <p>Символ для вызова команд</p>
+                        </div>
+                        <input type="text" class="setting-input" value="." maxlength="1" id="prefix">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>API Protection</h3>
+                            <p>Защита от вредоносных модулей</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="apiProtection" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Автообновление</h3>
+                            <p>Автоматически обновлять Nexus</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="autoUpdate">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Язык</h3>
+                            <p>Язык интерфейса</p>
+                        </div>
+                        <select class="setting-select" id="language">
+                            <option value="ru">Русский</option>
+                            <option value="en">English</option>
+                            <option value="de">Deutsch</option>
+                            <option value="ua">Українська</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    Сохранить настройки
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно загрузки модуля -->
+    <div class="modal" id="loadModuleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Загрузить модуль</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>URL модуля</label>
+                    <input type="text" id="moduleUrl" placeholder="https://example.com/module.py">
+                </div>
+                
+                <div class="form-group">
+                    <label>Или загрузите файл</label>
+                    <input type="file" id="moduleFile" accept=".py">
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="loadModule()">Загрузить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    </script>
+</body>
+</html>

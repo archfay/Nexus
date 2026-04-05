@@ -8,7 +8,7 @@
 
 # ©️ DoNotWeb, 2024-2025
 # This file is a part of Nexus Userbot
-# 🌐 https://github.com/DoNotWeb/Nexus
+# 🌐 https://github.com/archfay/Nexus
 # You can redistribute it and/or modify it under the terms of the GNU AGPLv3
 # 🔑 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -24,14 +24,14 @@ try:
         path=os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     ).active_branch.name
 except Exception:
-    branch = "master"
+    branch = "main"
 
 
 async def check_branch(me_id: int, allowed_ids: list):
-    if branch != "master" and me_id not in allowed_ids:
+    if branch != "main" and me_id not in allowed_ids:
         repo = git.Repo(
             path=os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         )
         repo.git.reset("--hard", "HEAD")
-        repo.git.checkout("master", force=True)
+        repo.git.checkout("main", force=True)
         restart()

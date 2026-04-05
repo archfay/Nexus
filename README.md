@@ -5,12 +5,12 @@
   
   **Advanced Telegram userbot with enhanced security and modern features**
   
-  [![Codacy Grade](https://app.codacy.com/project/badge/Grade/97e3ea868f9344a5aa6e4d874f83db14)](https://www.codacy.com/gh/DoNotWeb/Nexus)
-  [![Code Size](https://img.shields.io/github/languages/code-size/DoNotWeb/Nexus?color=blue)](https://github.com/DoNotWeb/Nexus)
-  [![Issues](https://img.shields.io/github/issues-raw/DoNotWeb/Nexus?color=red)](https://github.com/DoNotWeb/Nexus/issues)
-  [![License](https://img.shields.io/github/license/DoNotWeb/Nexus?color=green)](LICENSE)
-  [![Commit Activity](https://img.shields.io/github/commit-activity/m/DoNotWeb/Nexus?color=orange)](https://github.com/DoNotWeb/Nexus)
-  [![Stars](https://img.shields.io/github/stars/DoNotWeb/Nexus?style=flat&color=yellow)](https://github.com/DoNotWeb/Nexus/stargazers)
+  [![Codacy Grade](https://app.codacy.com/project/badge/Grade/97e3ea868f9344a5aa6e4d874f83db14)](https://www.codacy.com/gh/archfay/Nexus)
+  [![Code Size](https://img.shields.io/github/languages/code-size/archfay/Nexus?color=blue)](https://github.com/archfay/Nexus)
+  [![Issues](https://img.shields.io/github/issues-raw/archfay/Nexus?color=red)](https://github.com/archfay/Nexus/issues)
+  [![License](https://img.shields.io/github/license/archfay/Nexus?color=green)](LICENSE)
+  [![Commit Activity](https://img.shields.io/github/commit-activity/m/archfay/Nexus?color=orange)](https://github.com/archfay/Nexus)
+  [![Stars](https://img.shields.io/github/stars/archfay/Nexus?style=flat&color=yellow)](https://github.com/archfay/Nexus/stargazers)
   [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
   
   [📖 Documentation](#-documentation) • [🔧 Installation](#-installation) • [✨ Features](#-features) • [💬 Support](#-support)
@@ -45,7 +45,7 @@
 #### One-liner (Linux/macOS)
 ```bash
 apt update && apt install git python3 -y && \
-git clone https://github.com/DoNotWeb/Nexus && \
+git clone https://github.com/archfay/Nexus && \
 cd Nexus && \
 pip install -r requirements.txt && \
 python3 -m nexus
@@ -54,7 +54,7 @@ python3 -m nexus
 #### Step-by-step
 ```bash
 # Clone repository
-git clone https://github.com/DoNotWeb/Nexus
+git clone https://github.com/archfay/Nexus
 cd Nexus
 
 # Install dependencies
@@ -103,7 +103,7 @@ bash docker.sh
 |----------|------|
 | **User Guide** | [nexus-ub.xyz](https://nexus-ub.xyz/) |
 | **Developer Docs** | [dev.nexus-ub.xyz](https://dev.nexus-ub.xyz/) |
-| **GitHub Issues** | [Report bugs](https://github.com/DoNotWeb/Nexus/issues) |
+| **GitHub Issues** | [Report bugs](https://github.com/archfay/Nexus/issues) |
 
 ---
 
@@ -151,7 +151,7 @@ Nexus/
 
 ## 💬 Support
 
-[![Telegram Support](https://img.shields.io/badge/Telegram-Support_Group-2594cb?logo=telegram&style=for-the-badge)](https://t.me/nexus_talks)
+[![Telegram Support](https://img.shields.io/badge/Telegram-Support_Group-2594cb?logo=telegram&style=for-the-badge)](https://t.me/Nexus_Talking)
 
 Join our community for:
 - 💡 Tips and tricks

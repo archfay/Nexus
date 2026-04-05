@@ -3,7 +3,7 @@
 PORT=3429 # Port to run the server on
 echo "EXTERNAL_PORT=$PORT" >.env
 
-eval "git clone https://github.com/DoNotWeb/Nexus"
+eval "git clone https://github.com/archfay/Nexus"
 cd Nexus
 
 touch nexus-install.log
