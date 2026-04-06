@@ -27,9 +27,9 @@ class NexusPingMod(loader.Module):
         # Получаем настройки из kernel_settings
         kernel_settings = self.lookup("KernelSettings")
         if kernel_settings and hasattr(kernel_settings, "config"):
-            ping_msg = kernel_settings.config.get("ping_message", "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>")
+            ping_msg = kernel_settings.config.get("ping_message", "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>\n⏱ <b>Uptime:</b> <code>{uptime}</code>")
         else:
-            ping_msg = "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>"
+            ping_msg = "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>\n⏱ <b>Uptime:</b> <code>{uptime}</code>"
         
         await utils.answer(
             msg,
