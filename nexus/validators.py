@@ -15,14 +15,23 @@ import re
 import typing
 
 import grapheme
-from emoji import get_emoji_unicode_dict
 
 from . import utils
 from .translations import SUPPORTED_LANGUAGES, translator
 
 ConfigAllowedTypes = typing.Union[tuple, list, str, int, bool, None]
 
-ALLOWED_EMOJIS = set(get_emoji_unicode_dict("en").values())
+# Simplified emoji validation - just check if it's a valid unicode character
+try:
+    from emoji import EMOJI_DATA
+    ALLOWED_EMOJIS = set(EMOJI_DATA.keys())
+except ImportError:
+    # Fallback: basic emoji ranges
+    ALLOWED_EMOJIS = set()
+    for i in range(0x1F300, 0x1F9FF):  # Emoticons, symbols, pictographs
+        ALLOWED_EMOJIS.add(chr(i))
+    for i in range(0x2600, 0x27BF):  # Miscellaneous symbols
+        ALLOWED_EMOJIS.add(chr(i))
 
 
 class ValidationError(Exception):
