@@ -13,5 +13,8 @@ grapheme
 requests
 meval
 psutil
+beautifulsoup4
+lxml
+gitpython
 
 # Python 3.10+
