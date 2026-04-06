@@ -11,5 +11,7 @@ GitPython
 emoji
 grapheme
 requests
+meval
+psutil
 
 # Python 3.10+
