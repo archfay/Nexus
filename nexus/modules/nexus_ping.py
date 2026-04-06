@@ -17,15 +17,6 @@ class NexusPingMod(loader.Module):
 
     strings = {"name": "NexusPing"}
 
-    def __init__(self):
-        self.config = loader.ModuleConfig(
-            loader.ConfigValue(
-                "custom_message",
-                "🌐 <b>Pong!</b>\n⏱ <code>{ping} ms</code>",
-                "Custom ping message template. Use {ping} for ping value",
-            ),
-        )
-
     @loader.command()
     async def pingcmd(self, message: Message):
         """Check bot response time"""
@@ -33,7 +24,17 @@ class NexusPingMod(loader.Module):
         msg = await utils.answer(message, "🌐")
         ping = round((time.perf_counter_ns() - start) / 10**6, 3)
         
+        # Получаем настройки из kernel_settings
+        kernel_settings = self.lookup("KernelSettings")
+        if kernel_settings and hasattr(kernel_settings, "config"):
+            ping_msg = kernel_settings.config.get("ping_message", "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>")
+        else:
+            ping_msg = "🌐 <b>Ping:</b> <code>{ping}</code> <b>ms</b>"
+        
         await utils.answer(
             msg,
-            self.config["custom_message"].format(ping=ping)
+            ping_msg.format(
+                ping=ping,
+                uptime=utils.formatted_uptime()
+            )
         )
