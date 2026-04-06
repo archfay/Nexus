@@ -53,7 +53,7 @@ def restart():
 
     if "NEXUS_DO_NOT_RESTART2" in os.environ:
         print(
-            "nexusTL version 1.0.2 or higher is required, use `pip install heroku-tl-new -U` for update."
+            "heroku-tl-new version 2.0.0 or higher is required, use `pip install heroku-tl-new -U` for update."
         )
         sys.exit(0)
 

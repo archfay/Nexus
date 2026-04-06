@@ -5,5 +5,9 @@ aiohttp==3.11.18
 aiogram>=3.26.0
 setuptools==69.0.0
 pet-pet-gif
+GitPython
+emoji
+grapheme
+requests
 
 # Python 3.10+
