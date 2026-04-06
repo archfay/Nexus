@@ -1,14 +1,18 @@
 [Unit]
 Description=Nexus Telegram Userbot
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=/root/Nexus
-ExecStart=/root/Nexus/venv/bin/python3 -m nexus
-Restart=always
-RestartSec=10
+Environment="PATH=/root/Nexus/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/root/Nexus/venv/bin/python3 -m nexus --root --no-web
+Restart=on-failure
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

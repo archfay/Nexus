@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # Nexus Userbot - Systemd Service Installer
-# This script installs Nexus as a system service
 
-echo "🚀 Installing Nexus as systemd service..."
+echo "🚀 Installing Nexus systemd service..."
 
-# Check if running as root
 if [ "$EUID" -ne 0 ]; then 
-    echo "❌ Please run as root (use sudo)"
+    echo "❌ Run as root: sudo bash install_service.sh"
     exit 1
 fi
+
+# Stop existing service
+systemctl stop nexus 2>/dev/null
 
 # Copy service file
 cp nexus.service /etc/systemd/system/nexus.service
@@ -17,19 +18,22 @@ cp nexus.service /etc/systemd/system/nexus.service
 # Reload systemd
 systemctl daemon-reload
 
-# Enable service (autostart on boot)
+# Enable autostart
 systemctl enable nexus.service
 
-echo "✅ Service installed successfully!"
+echo "✅ Service installed!"
 echo ""
-echo "📋 Available commands:"
-echo "  sudo systemctl start nexus    - Start Nexus"
-echo "  sudo systemctl stop nexus     - Stop Nexus"
-echo "  sudo systemctl restart nexus  - Restart Nexus"
-echo "  sudo systemctl status nexus   - Check status"
-echo "  sudo journalctl -u nexus -f   - View logs"
+echo "📋 Commands:"
+echo "  systemctl start nexus    - Start"
+echo "  systemctl stop nexus     - Stop"
+echo "  systemctl restart nexus  - Restart"
+echo "  systemctl status nexus   - Status"
+echo "  journalctl -u nexus -f   - Logs"
 echo ""
-echo "🔄 Starting Nexus..."
-systemctl start nexus
-
-echo "✅ Done! Nexus is now running in background"
+read -p "Start Nexus now? (y/n): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    systemctl start nexus
+    sleep 2
+    systemctl status nexus
+fi
