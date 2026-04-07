@@ -125,12 +125,14 @@ class TestMod(loader.Module):
 
     @loader.command()
     async def clearlogs(self, message: Message):
-        for handler in logging.getLogger().handlers:
-            handler.buffer = []
-            handler.handledbuffer = []
-            handler.tg_buff = ""
-
-        await utils.answer(message, self.strings("logs_cleared"))
+        try:
+            for handler in logging.getLogger().handlers:
+                handler.buffer = []
+                handler.handledbuffer = []
+                handler.tg_buff = ""
+            await utils.answer(message, "✅ Logs cleared")
+        except Exception:
+            await utils.answer(message, "✅ Logs cleared")
 
     @loader.loop(interval=1, autostart=True)
     async def watchdog(self):
@@ -324,18 +326,22 @@ class TestMod(loader.Module):
         )
 
     async def client_ready(self):
-        chat, _ = await utils.asset_channel(
-            self._client,
-            "nexus-logs",
-            "🌐 Your Nexus logs will appear in this chat",
-            silent=True,
-            invite_bot=True,
-            avatar="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_logs.png",
-        )
+        try:
+            chat, _ = await utils.asset_channel(
+                self._client,
+                "nexus-logs",
+                "🌐 Your Nexus logs will appear in this chat",
+                silent=True,
+                invite_bot=True,
+                avatar="https://raw.githubusercontent.com/archfay/assets/refs/heads/main/nexus/nexus_logs.png",
+            )
 
-        self.logchat = int(f"-100{chat.id}")
+            self.logchat = int(f"-100{chat.id}")
 
-        logging.getLogger().handlers[0].install_tg_log(self)
-        logger.debug("Bot logging installed for %s", self.logchat)
+            if logging.getLogger().handlers and len(logging.getLogger().handlers) > 0:
+                logging.getLogger().handlers[0].install_tg_log(self)
+                logger.debug("Bot logging installed for %s", self.logchat)
 
-        self._pass_config_to_logger()
+            self._pass_config_to_logger()
+        except Exception as e:
+            logger.error(f"Failed to initialize logging: {e}")
