@@ -304,20 +304,19 @@ class TestMod(loader.Module):
         """- Find out your userbot ping"""
         start = time.perf_counter_ns()
         message = await utils.answer(message, self.config["ping_emoji"])
-        banner = self.config["banner_url"]
+        banner = self.config["banner_url"] if self.config.get("banner_url") else None
+        hint = self.config.get("hint", "")
 
         await utils.answer(
             message,
             self.config["Text_Of_Ping"].format(
                 ping=round((time.perf_counter_ns() - start) / 10**6, 3),
                 uptime=utils.formatted_uptime(),
-                ping_hint=(
-                    (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
-                ),
+                ping_hint=hint if hint and random.choice([0, 0, 1]) == 1 else "",
                 hostname=lib_platform.node(),
                 user=getpass.getuser(),
             ),
-            file=banner,
+            file=banner if banner else None,
         )
 
     async def client_ready(self):
