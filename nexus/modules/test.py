@@ -304,27 +304,21 @@ class TestMod(loader.Module):
         """- Find out your userbot ping"""
         start = time.perf_counter_ns()
         message = await utils.answer(message, self.config["ping_emoji"])
-        banner = self.config["banner_url"] if self.config["banner_url"] else None
+        banner = self.config["banner_url"]
 
-        try:
-            await utils.answer(
-                message,
-                self.config["Text_Of_Ping"].format(
-                    ping=round((time.perf_counter_ns() - start) / 10**6, 3),
-                    uptime=utils.formatted_uptime(),
-                    ping_hint=(
-                        (self.config["hint"]) if self.config["hint"] and random.choice([0, 0, 1]) == 1 else ""
-                    ),
-                    hostname=lib_platform.node(),
-                    user=getpass.getuser(),
+        await utils.answer(
+            message,
+            self.config["Text_Of_Ping"].format(
+                ping=round((time.perf_counter_ns() - start) / 10**6, 3),
+                uptime=utils.formatted_uptime(),
+                ping_hint=(
+                    (self.config["hint"]) if random.choice([0, 0, 1]) == 1 else ""
                 ),
-                file=banner,
-            )
-        except Exception as e:
-            await utils.answer(
-                message,
-                f"🌐 <b>Ping:</b> <code>{round((time.perf_counter_ns() - start) / 10**6, 3)}</code> <b>ms</b>\n⏱ <b>Uptime:</b> <code>{utils.formatted_uptime()}</code>",
-            )
+                hostname=lib_platform.node(),
+                user=getpass.getuser(),
+            ),
+            file=banner,
+        )
 
     async def client_ready(self):
         chat, _ = await utils.asset_channel(
