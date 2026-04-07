@@ -20,7 +20,7 @@ pip install --upgrade pip setuptools wheel
 
 # Install dependencies one by one to catch errors
 echo "Installing core dependencies..."
-pip install heroku-tl-new>=2.0.0
+pip install heroku-tl-new -U
 pip install Pillow>=10.0.0
 pip install orjson>=3.9.0
 pip install aiohttp==3.11.18
@@ -36,6 +36,7 @@ pip install meval
 pip install psutil>=5.9.0
 pip install beautifulsoup4>=4.12.0
 pip install lxml>=4.9.0
+pip install "ruamel.yaml>=0.17.0"
 
 echo "Installing optional dependencies..."
 pip install pet-pet-gif || echo "Warning: pet-pet-gif failed, skipping"
