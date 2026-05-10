@@ -306,7 +306,7 @@ class TestMod(loader.Module):
             await utils.answer(message, self.strings("suspend_invalid_time"))
 
     @loader.command()
-    async def ping(self, message: Message):
+    async def pingcmd(self, message: Message):
         """- Find out your userbot ping"""
         start = time.perf_counter_ns()
         message = await utils.answer(message, self.config["ping_emoji"])

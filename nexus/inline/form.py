@@ -342,10 +342,16 @@ class Form(InlineUnit):
         async def answer(msg: str):
             nonlocal message
             if isinstance(message, Message):
-                await (message.edit if message.out else message.respond)(
-                    msg,
-                    **({} if message.out else {"reply_to": utils.get_topic(message)}),
-                )
+                try:
+                    await (message.edit if message.out else message.respond)(
+                        msg,
+                        **({} if message.out else {"reply_to": utils.get_topic(message)}),
+                    )
+                except Exception:
+                    with contextlib.suppress(Exception):
+                        await self._client.send_message(
+                            utils.get_chat_id(message), msg
+                        )
             else:
                 await self._client.send_message(message, msg)
 

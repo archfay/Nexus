@@ -17,19 +17,6 @@ class AdminBroadcastMod(loader.Module):
         self.admin_id = 8467174655
 
     @loader.command()
-    async def cl(self, message: Message):
-        """Set changelog text (admin only)"""
-        if message.sender_id != self.admin_id:
-            return
-        
-        if not (text := utils.get_args_raw(message)):
-            await utils.answer(message, "❌ Укажите текст changelog")
-            return
-        
-        self._db.set("AdminBroadcast", "changelog", text)
-        await utils.answer(message, "✅ Changelog обновлен")
-
-    @loader.command()
     async def mess(self, message: Message):
         """Send message to all users"""
         if message.sender_id != self.admin_id:

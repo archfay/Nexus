@@ -587,7 +587,12 @@ class LoaderMod(loader.Module):
                 "telethon": "heroku-tl-new",
                 "herokutl": "heroku-tl-new",
             }
-            requirements = [package_map.get(req.lower(), req) for req in requirements]
+            # heroku — локальный shim, не устанавливать через pip
+            requirements = [
+                package_map.get(req.lower(), req)
+                for req in requirements
+                if req.lower() != "heroku"
+            ]
 
             if requirements:
                 await self.install_requirements(requirements)

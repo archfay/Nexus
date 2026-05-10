@@ -281,16 +281,16 @@ class CommandDispatcher:
         if not hasattr(event, "message") or not hasattr(event.message, "message"):
             return False
 
-        initiator = getattr(event, "sender_id", 0)
+        initiator = getattr(event, "sender_id", 0) or self._client.tg_id
 
         main_prefix = self._db.get(main.__name__, "command_prefix", ".")
         multi_prefixes = self._db.get(main.__name__, "multi_prefixes", [])
-        
-        if initiator == self._client.tg_id:
+
+        if initiator == self._client.tg_id or getattr(event, "out", False):
             prefixes = [main_prefix] + multi_prefixes
         else:
-            prefix = self._db.get(main.__name__, "command_prefixes", {})
-            prefixes = [prefix.get(str(initiator), main_prefix)]
+            _per_user = self._db.get(main.__name__, "command_prefixes", {})
+            prefixes = [_per_user.get(str(initiator), main_prefix)]
 
         change = str.maketrans(ru_keys + en_keys, en_keys + ru_keys)
         message = utils.censor(event.message)
@@ -420,11 +420,9 @@ class CommandDispatcher:
 
                     break
 
-            return False
-
         message.message = prefix + txt + message.message[len(prefix + command) :]
 
-        if (
+        if hasattr(func, "__self__") and (
             f"{str(chat_id)}.{func.__self__.__module__}" in blacklist_chats
             or whitelist_modules
             and f"{str(chat_id)}.{func.__self__.__module__}" not in whitelist_modules

@@ -365,10 +365,6 @@ class TerminalMod(loader.Module):
         cmd: str,
         editor: typing.Optional[MessageEditor] = None,
     ):
-        # basic protection: only owner may run terminal commands
-        if getattr(message, "from_id", None) and message.from_id != self._client.nexus_me.id:
-            await utils.answer(message, "🚫 Permission denied: terminal commands allowed only for owner")
-            return
         if len(cmd.split(" ")) > 1 and cmd.split(" ")[0] == "sudo":
             needsswitch = True
 

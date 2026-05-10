@@ -22,3 +22,9 @@ __credits__ = []
 __license__ = "AGPLv3"
 __maintainer__ = "developer"
 __status__ = "Production"
+
+# Install heroku→nexus compatibility shim
+try:
+    import heroku  # noqa: F401
+except Exception:
+    pass

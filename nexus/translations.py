@@ -191,6 +191,15 @@ class ExternalTranslator(BaseTranslator):
         }
 
 
+class _CfgProxy:
+    """Fallback proxy for self.strings['_cfg'] used by Hikka-compatible modules"""
+    def __getitem__(self, key: str) -> str:
+        return ""
+
+    def get(self, key: str, default: str = "") -> str:
+        return default
+
+
 class Strings:
     def __init__(self, mod: Module, translator: Translator):  # skipcq: PYL-W0621
         self._mod = mod
@@ -209,6 +218,8 @@ class Strings:
             return self[key]
 
     def __getitem__(self, key: str) -> str:
+        if key == "_cfg":
+            return _CfgProxy()
         return (
             self.external_strings.get(key, None)
             or (

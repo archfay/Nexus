@@ -37,11 +37,6 @@ class Quickstart(loader.Module):
     strings = {"name": "Quickstart"}
 
     async def client_ready(self):
-        await self.request_join(
-            "Nexus_Talking",
-            "Nexus help is only available in this chat. By agreeing to join the chat, you agree to the Nexus federation rules and if you violate them, you will be permanently banned.",
-        )
-
         self.mark = lambda: [
             [
                 {

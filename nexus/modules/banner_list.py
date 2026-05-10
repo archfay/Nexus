@@ -245,7 +245,7 @@ class BannerListMod(loader.Module):
             info_mod.infocmd = patched_info
 
         if test_mod:
-            original_ping = test_mod.ping
+            original_ping = test_mod.pingcmd
 
             async def patched_ping(msg: Message):
                 banner = self._get_banner_by_mode(
@@ -259,7 +259,7 @@ class BannerListMod(loader.Module):
                     test_mod.config["banner_url"] = None
                 await original_ping(msg)
 
-            test_mod.ping = patched_ping
+            test_mod.pingcmd = patched_ping
 
         if restarter_mod:
             original_restart = restarter_mod.restart

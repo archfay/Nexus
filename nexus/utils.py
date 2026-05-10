@@ -928,6 +928,59 @@ async def asset_channel(
     return peer, True
 
 
+async def asset_forum_topic(
+    client: "CustomTelegramClient",
+    channel: hints.EntityLike,
+    title: str,
+    *,
+    icon_color: typing.Optional[int] = None,
+    icon_emoji_id: typing.Optional[int] = None,
+) -> typing.Any:
+    """
+    Create a forum topic in a channel (if it doesn't exist) and return it.
+    :param client: Telegram client
+    :param channel: Channel/supergroup entity
+    :param title: Topic title
+    :param icon_color: Optional icon color
+    :param icon_emoji_id: Optional icon emoji id
+    :return: Forum topic object
+    """
+    from herokutl.tl.functions.channels import GetForumTopicsRequest
+    from herokutl.tl.functions.channels import CreateForumTopicRequest
+
+    try:
+        result = await client(
+            GetForumTopicsRequest(
+                channel=channel,
+                q=title,
+                offset_date=0,
+                offset_id=0,
+                offset_topic=0,
+                limit=100,
+            )
+        )
+        for topic in result.topics:
+            if getattr(topic, "title", None) == title:
+                return topic
+    except Exception:
+        logger.debug("Failed to get forum topics", exc_info=True)
+
+    try:
+        kwargs = {"channel": channel, "title": title, "random_id": int(time.time())}
+        if icon_color is not None:
+            kwargs["icon_color"] = icon_color
+        if icon_emoji_id is not None:
+            kwargs["icon_emoji_id"] = icon_emoji_id
+        result = await client(CreateForumTopicRequest(**kwargs))
+        for update in result.updates:
+            if hasattr(update, "id"):
+                return update
+        return result
+    except Exception:
+        logger.debug("Failed to create forum topic", exc_info=True)
+        return None
+
+
 async def dnd(
     client: CustomTelegramClient,
     peer: hints.Entity,
@@ -1941,3 +1994,17 @@ def get_version_raw() -> str:
 
 get_platform_name = get_named_platform
 version = get_version_raw
+
+# Placeholder registry
+_placeholders: typing.Dict[str, typing.Tuple[typing.Callable, str]] = {}
+
+
+def register_placeholder(name: str, func: typing.Callable, description: str = "") -> None:
+    _placeholders[name] = (func, description)
+
+
+async def resolve_placeholder(name: str) -> typing.Optional[str]:
+    entry = _placeholders.get(name)
+    if entry is None:
+        return None
+    return await entry[0]()

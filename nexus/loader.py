@@ -537,7 +537,8 @@ class Modules:
             callback_handlers = {}
             watchers = []
             for module in self.modules:
-                commands.update(module.nexus_commands)
+                cmds = module.nexus_commands
+                commands.update(cmds)
                 inline_handlers.update(module.nexus_inline_handlers)
                 callback_handlers.update(module.nexus_callback_handlers)
                 watchers.extend(module.nexus_watchers.values())
@@ -1157,6 +1158,8 @@ class Modules:
 
     def unregister_commands(self, instance: Module, purpose: str):
         for name, cmd in self.commands.copy().items():
+            if not hasattr(cmd, "__self__"):
+                continue
             if cmd.__self__.__class__.__name__ == instance.__class__.__name__:
                 logger.debug(
                     "Removing command %s of module %s for %s",
